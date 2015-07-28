@@ -1,3 +1,5 @@
+#### All functions in this file are private methods used by the
+#### "calibration" function
 
 # TODO : Replace bounds by more generic "distanceParams"
 # TODO : remove description=FALSE everywhere
@@ -116,7 +118,7 @@ calibAlgorithm <- function (Xs, d, total, q=rep(1,length(d)),
 }
 
 
-# TODO : explain clearly that these are 
+# TODO : explain clearly that these are
 # not real distances, but inverse of distances
 # TODO : add qk vectors
 # TODO : separate file for distances ?

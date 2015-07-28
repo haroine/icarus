@@ -24,6 +24,11 @@ using the Beaumont-Haziza method}
 
 \item{If}{TRUE, display a few stats and graphs about the NRA weights created}
 }
+\value{
+Input dataframe augmented with three columns : numGRH (id of HRG the unit is assigned to),
+rapportPoidsCNR (the non-response adjustment factor) and
+POIDS_CNR (the final non-response adjusted weights)
+}
 \description{
 Create Non-response Adjusted Weights using the HRG method
 }

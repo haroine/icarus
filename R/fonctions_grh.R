@@ -1,16 +1,4 @@
 
-# Fonction generique avec tout plein d'options qui permet de
-# faire des GRH en une ligne
-# - model = le modele logit pour les GRH. Exemple :
-#       npdcModel = glm(repondant ~ LZUS
-#                       + LOGEMENTCO
-#                       + LOGEMENT_PETIT # Check modalites variables
-#                       + OCC_HLM_1 # "est un logement HLM"
-#                       + STOCD_23
-#                       # Position professionnelle
-#                       + OUVRIER
-#                       , family=binomial(logit), data=enlNPdC )
-#
 #' Create Non-response Adjusted Weights using the HRG method
 #'
 #' @param data The dataframe containing the survey results. Must include
@@ -23,6 +11,12 @@
 #' @param nGRH Number of groups created. If NULL, the number of groups is computed
 #' using the Beaumont-Haziza method
 #' @param If TRUE, display a few stats and graphs about the NRA weights created
+#'
+#' @return Input dataframe augmented with three columns : numGRH (id of HRG the unit is assigned to),
+#' rapportPoidsCNR (the non-response adjustment factor) and
+#' POIDS_CNR (the final non-response adjusted weights)
+#'
+#' @export
 ajouterPoidsGRH = function(data, modelGRH, colPoids="POIDS", colNew=c("pHat","numGRH","rapportPoidsCNR","POIDS_CNR"),
                     nGRH=NULL, stats=FALSE) {
 
@@ -70,6 +64,7 @@ ajouterPoidsGRH = function(data, modelGRH, colPoids="POIDS", colNew=c("pHat","nu
 # TODO : documenter la fonction
 # TODO : very slow !!... -> improve (C ?)
 # Switch from String methods to function methods
+## TODO : remove from package
 imputViaNeighbors = function(data, colToImput, vecParams, method="mean") {
 
   # Select NAs from colToImput
@@ -140,6 +135,7 @@ imputViaNeighbors = function(data, colToImput, vecParams, method="mean") {
   return(returnVector)
 }
 
+## TODO : remove from package
 firstNotNA = function(vec, i=1)
 {
   if(!is.na(vec[i])) {
@@ -156,6 +152,7 @@ firstNotNA = function(vec, i=1)
 # Fonction d'imputation des pHat pour les NA
 # TODO : par défaut, vecParams = vec du modèle GRH s'ils existe :
 # vecParams=names(modelGRH$coefficients)[2:length(modelGRH$coefficients)]
+## TODO : imput by only using the mean of the pHat column
 imputpHat = function(data, vecParams=NULL, modelGRH=NULL) {
   if(is.null(vecParams)) {
     if(!is.null(modelGRH)) vecParams = names(modelGRH$coefficients)[2:length(modelGRH$coefficients)]
@@ -291,6 +288,8 @@ statsGRH = function(data, colRepondant="repondant", colNumGRH="numGRH", colPoids
 
 # Methode de Haziza et Beaumont pour déterminer le nombre de GRH
 # TODO : utiliser dichotomie plutôt que for
+#' Computes the optimal number of HRG according to the Beaumont-Haziza method
+#' @export
 ngrhHazizaBeaumont = function(nGRHtests, data, seuil=0.99, colpHat="pHat") {
 
   rsquaredvec = rep(0, nGRHtests)
@@ -325,6 +324,8 @@ ngrhHazizaBeaumont = function(nGRHtests, data, seuil=0.99, colpHat="pHat") {
 # Exemples :
 # statsTauxCollecte(enlNPdC, nameCol="OCC_STATUT_OCC", nameDummy="STOCD")
 # statsTauxCollecte(enlNPdC, nameCol="TUU", selection=c("PC","GC","RURAL"))
+#' Outputs stats about the collection rate
+#' @export
 statsTauxCollecte = function(data, nameCol, nameDummy=nameCol, colRepondant = "repondant", selection=c("auto"), sepDummies="_") {
 
   if(selection[1]=="auto")
@@ -357,6 +358,10 @@ statsTauxCollecte = function(data, nameCol, nameDummy=nameCol, colRepondant = "r
 # TODO : documenter
 # TODO : par défaut, vecMarges devrait correspondre aux colonnes de la table de marges si elle existe
 # TODO : Si la table des marges existe, ajouter la colonne marge à côté
+#' Outputs stats about the non-response adjustment process for some variables
+#' @param vecMarges names of variables for which stats are computed
+#' @return List of stats for each vector
+#' @export
 statsMarges = function(data, vecMarges, colPoids = "POIDS", colPoidsCNR="POIDS_CNR", colRepondant="repondant", sepDummies="_", statsEchantillon=FALSE) {
 
   # Somme des poids (total)
@@ -472,91 +477,3 @@ statsMarges = function(data, vecMarges, colPoids = "POIDS", colPoidsCNR="POIDS_C
 
   return(statsMargesList)
 }
-
-
-#######################################################
-############### Fonctions dépréciées ##################
-#######################################################
-# imputpHat2 = function(data, listParams) {
-#
-#   .Deprecated("imputpHat")
-#
-#   # Select NAs pHat from data
-#   pHatNA = data[is.na(data$pHat),]
-#
-#   returnVector = rep(0,nrow(pHatNA))
-#
-#   for(i in 1:nrow(pHatNA)) {
-#
-#     # Fill vecVal with value of row i
-#     # TODO : not if value is NA !!!!
-#     vecVal = rep(0,length(listParams))
-#     for(j in 1:length(listParams)) {
-#       ident = as.numeric(row.names(pHatNA[i,]))
-#
-#       vecValue = unlist(listParams[j])[ident]
-#       if(!is.na(vecValue))
-#         vecVal[j] = vecValue
-#       else
-#         stop(paste("NA found in value number ",j," of row number ",i))
-#     }
-#
-#     # TODO : penser à mettre un warning si aucun "plus proche voisin" n'est trouvé
-#     matrixVoisins = matrixVoisins(data, listParams, vecVal)
-#
-#     if(nrow(matrixVoisins) == 0)
-#       stop("WARNING : no neighbors for selected condition")
-#
-#     imputValue = mean(matrixVoisins$pHat, na.rm=TRUE) # Imput with mean of the "neighbors"
-#
-#     returnVector[i] = imputValue
-#   }
-#
-#   return(returnVector)
-# }
-#
-#
-# matrixVoisins2 = function(data, listParams, vecVal) {
-#
-#   .Deprecated("matrixVoisins")
-#
-#   return(data[unlist(listParams) == vecVal,])
-# }
-#
-#
-# imputpHat3 = function(data, vecParams) {
-#
-#   # Select NAs pHat from data
-#   pHatNA = data[is.na(data$pHat),]
-#
-#   returnVector = rep(0,nrow(pHatNA))
-#
-#   for(i in 1:nrow(pHatNA)) {
-#
-#     # Fill vecVal with value of row i
-#     # TODO : not if value is NA !!!!
-#     vecVal = rep(0,length(vecParams))
-#     for(j in 1:length(vecParams)) {
-#       ident = as.numeric(row.names(pHatNA[i,]))
-#
-#       vecValue = data.matrix(data[vecParams[j]])[ident]
-#
-#       if(!is.na(vecValue))
-#         vecVal[j] = vecValue
-#       else
-#         stop(paste("NA found in value number ",j," of row number ",i))
-#     }
-#
-#     # TODO : penser à mettre un warning si aucun "plus proche voisin" n'est trouvé
-#     matrixVoisins = matrixVoisins(data, vecParams, vecVal)
-#
-#     if(nrow(matrixVoisins) == 0)
-#       stop("WARNING : no neighbors for selected condition")
-#
-#     imputValue = mean(matrixVoisins$pHat, na.rm=TRUE) # Imput with mean of the "neighbors"
-#
-#     returnVector[i] = imputValue
-#   }
-#
-#   return(returnVector)
-# }

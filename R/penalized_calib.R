@@ -1,4 +1,5 @@
-### Partial calibration functions
+### Partial calibration functions. Are all private, used by the main
+### "calibration" function
 
 ## TODO : remove distances
 penalizedCalib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
@@ -25,20 +26,20 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
                                 distance, updateParameters, params, costs, infinity=1e7, uCostPenalized=1e2
                                 , maxIter=500, calibTolerance=1e-06
                                 , lambda=NULL, setLambdaPerso=FALSE, gap=NULL) {
-  
+
   ## In this case, penalized calibration has to check with regular calibration
-  if( all(cleanCosts(costs, infinity, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), infinity, uCostPenalized)) ) { 
+  if( all(cleanCosts(costs, infinity, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), infinity, uCostPenalized)) ) {
     matchClassicCalibration <- TRUE
   } else {
     matchClassicCalibration <- FALSE
   }
-  
+
   if(!is.null(costs)) {
       costs <- cleanCosts(costs, infinity, uCostPenalized)
     } else {
       stop("Can't process NULL costs !")
   }
-  
+
   wRegularCalibration <- calib(Xs, d, total, q, "linear")*d
 #   print(calib(Xs, d, total, q, "linear"))
   ## TODO : handle case when no convergence for linear calib (fail)
@@ -47,14 +48,14 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
   if(lambdaTest == 0) {
     lambdaTest <- 1
   }
-  
+
   # If lambda is NULL, lambda is computed
   # so that the two terms of the optimization program
-  # are somewhat numerically equal (distance between w and d is 
+  # are somewhat numerically equal (distance between w and d is
   # estimated by distance on regular linear calibration)
   if(is.null(lambda)) {
-    
-    if(matchClassicCalibration) { 
+
+    if(matchClassicCalibration) {
 #       lambda <- lambdaTest*1e15
       lambda <- 1
     } else {
@@ -66,9 +67,9 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
   if(is.na(lambda)) {
     lambda <- 1
   }
-  
+
   if(!is.null(gap)) {
-    
+
     ## Check if regular linear calibration weights' gap
     ## is inferior to selected gap
     ## (then it is better to return linear weights)
@@ -78,7 +79,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
       warning("Return linear calibration weights, which give inferior gap.")
       return(wRegularCalibration)
     }
-    
+
     return( searchLambda(Xs, d, total, q,
                                      distance, updateParameters, params, costs,
                                      maxIter, calibTolerance
@@ -86,7 +87,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
                                       , lambdaTest=lambda, setLambdaPerso=setLambdaPerso
                                       , gap=gap) )
   }
-  
+
 
   paramInit <- wRegularCalibration
   if(is.null(paramInit) || length(paramInit) == 0) {
@@ -127,11 +128,11 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
                          , lastLambdas=NULL, lambdaBackup=1, lambdaTest=NULL
                          , setLambdaPerso=FALSE
                          , gap, count=0) {
-  
+
   # In pratice, optimal lambdas can be found in a very wide domain,
   # so we must set very wide default values
   defaultLastLambdas <- c(1e-50,1e50)
-  
+
   if(is.null(lambdaTest) && is.null(lastLambdas)) {
     lambdaTest <- 1
     lastLambdas <- defaultLastLambdas
@@ -145,10 +146,10 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
         lambdaTest <- mean(lastLambdas)
       }
     }
-    
+
     if(!is.null(lambdaTest) && is.null(lastLambdas)) {
         lastLambdas <- c(lambdaTest/1e15, lambdaTest*1e15)
-        
+
         if(setLambdaPerso) {
           warning("Personal lambda set : search interval reduced, may not converge")
           lastLambdas <- c(lambdaTest/1e3, lambdaTest*1e3)
@@ -158,23 +159,23 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
   }
 
   writeLines(paste("Test with lambda = ", lambdaTest, sep=""))
-  
+
   w <- penalCalibAlgorithm(Xs, d, total, q,
                                        distance, updateParameters, params, costs,
                                        maxIter, calibTolerance
                                        , lambda=lambdaTest, setLambdaPerso=FALSE)
-  
+
   g <- w/d
   minG <- min(g)
   maxG <- max(g)
   print(minG)
   print(maxG)
-  
+
   if( (count > 0 && abs(lambdaBackup - lambdaTest) <= 1e-7) || (abs(maxG - minG - gap) <= 1e-4) ) {
     writeLines(paste("Found lambda = ",lambdaTest, " ; count = ",count, sep=""))
     return(w)
   }
-  
+
   if(maxG - minG <= gap) {
     writeLines("Lambda too small")
     return( searchLambda(Xs, d, total, q=rep(1,length(d)),
@@ -190,33 +191,33 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
                          , lastLambdas=c(lastLambdas[1], lambdaTest), lambdaBackup=lambdaTest
                          , gap=gap, count=count+1) )
   }
-  
+
 }
 
 
 formatCosts <- function(costs, marginMatrix, popTotal) {
-  
+
   costsFormatted <- NULL
-  
+
   for(i in 1:nrow(marginMatrix)) {
-    
+
     nModalitiesMargin <- as.numeric(marginMatrix[i,2])
-    
+
     if( nModalitiesMargin <= 1 ) {
       costsFormatted <- c(costsFormatted, costs[i])
     } else {
       costsFormatted <- c(costsFormatted, rep(costs[i],nModalitiesMargin))
     }
-    
+
   }
-  
+
   ## Add popTotal if not NULL
   if( !is.null(popTotal) ) {
     costsFormatted <- c(costsFormatted, costs[length(costs)])
   }
-  
+
   return(costsFormatted)
-  
+
 }
 
 ###### Distances #######
@@ -230,42 +231,42 @@ distanceKhiTwo <- function(w,d, params=NULL) {
 
 # params are bounds
 distanceLogitBounds <- function(w,d, bounds) {
-  
+
   if(length(bounds) != 2) {
     stop("Must enter LO and UP bounds in a vector.
           Example : bounds=c(0.5,1.5) for LO = 0.5 and UP=1.5")
   }
-  
+
   L <- bounds[1]
   U <- bounds[2]
   A <- (U - L) / ((1-L)*(U-1))
   r <- w/d
   distanceVec <- 1/A*( (r-L)*log((r-L)/(1-L)) + (U-r)*log((U-r)/(U-1)))
   distance <- d*distanceVec
-  
+
   return( sum(distance) )
 }
 
 distanceTruncated <- function(w,d,bounds, infinity=1e10) {
-  
+
   r <- w/d
   L <- bounds[1]
   U <- bounds[2]
-  
+
   r[r > U] <- infinity
   r[r < L] <- infinity
-  
+
   distanceVec <- 0.5*(r-1)*(r-1)
   distance <- d*distanceVec
-  
+
   return(sum(distance))
 }
 
 distanceRaking <- function(w,d, params=NULL) {
-  
+
   distanceVec <- (w/d)*log(w/d) - (w/d) + 1
   distance <- d*distanceVec
-  
+
   return( sum(distance) )
 }
 

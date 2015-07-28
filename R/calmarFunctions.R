@@ -157,6 +157,46 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 # Careful, contrary to old rule, returns calibrated weights and not
 # ratio between initial and calibrated weights
 # Careful with lambda, triggers restrictedSearch, meaning searchLambda could never converge
+#########
+#' Performs calibration on margins with lots of customizable parameters
+#'
+#' @param data The dataframe containing the survey data
+#' @param marginMatrix The matrix giving the margins for each column variable included
+#' in the calibration problem
+#' @param colWeights The name of the column containing the initial weights in the survey
+#' dataframe
+#' @param colCalibratedWeights The name of the column of final calibrated weights
+#' @param method The method used to calibrate. Can be "linear", "raking", "logit", "truncated"
+#' @param maxIter The maximum number of iterations before stopping
+#' @param description If TRUE, output stats about the calibration process as well as the
+#' graph of the density of the ratio calibrated weights / initial weights
+#' @param bounds Two-element vector containing the lower and upper bounds for bounded methods
+#' ("truncated" and "logit")
+#' @param costs The penalized calibration method will be used, using costs defined by this
+#' vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given
+#' a default that can be adjusted through parameter "infinity"
+#' @param popTotal Precise the total population if margins are defined by relative value in
+#' marginMatrix (percentages)
+#' @param scale If TRUE, stats (including bounds) on ratio calibrated weights / initial weights are
+#' done on a vector multiplied by the weighted non-response ratio (ratio population total /
+#' total of initial weights). Has same behavior as "ECHELLE=0" in Calmar.
+#' @param check performs a few check about the dataframe. TRUE by default
+#' @param infinity Only used in the penalized calibration. Use this to tweak the numeric value
+#' of an infinite cost.
+#' @param uCostPenalized Unary cost by which every cost is "costs" column is multiplied
+#' @param lambda The ridge lambda used in penalized calibration.
+#' @param gap Only useful for penalized calibration. Sets the maximum gap between max and min
+#' calibrated weights / initial weights ratio (and thus is similar to the "bounds"
+#' parameter used in regular calibration)
+#' @param exportDistributionImage File name to which the density plot shown when
+#' description is TRUE is exported. Requires package "ggplot2"
+#' @param exportDistributionTable File name to which the distribution table of before/after
+#' weights shown when description is TRUE is exported.
+#' Requires package "ggplot2". Requires package "xtable"
+#'
+#' @return column containing the final calibrated weights
+#'
+#' @export
 calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWeights="POIDS_CALES", method="linear",
                        maxIter=2500, description=TRUE, bounds=NULL, costs=NULL, popTotal=NULL, scale=NULL, check=TRUE
                        , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL
@@ -316,8 +356,13 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
   return(g*weights)
 }
 
-# Nice "table" showing totals after/before calibration (and showing margins too),
-# just as first panels in Calmar/Calmar2
+#' Gives stats about the calibration process: totals after/before calibration vs. margins
+#' Same as first panels output in Calmar/Calmar 2
+#' @param data dataframe containing the survey data
+#' @param marginMatrix matrix of margins
+#' @param popTotal total of population, useful if margins are entered in relative value
+#' @param colWeights name of weights column in the dataframe
+#' @export
 calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights="POIDS", colCalibratedWeights=NULL, calibThreshold=1.0) {
 
   displayCalibratedWeights <- TRUE
@@ -455,6 +500,7 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
   return(marginStatsList)
 }
 
+
 marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
                         , colCalibratedWeights=NULL, calibThreshold=1.0) {
 
@@ -487,6 +533,7 @@ marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
 
 # Does the hot-deck imputation of NAs in calibration variables
 # Hot-deck neighbors are selected via margins (of marginMatrix)
+## TODO : deprecate and remove
 imputCalibrationVars = function(data, marginMatrix) {
 
   dataUpdated = data
@@ -573,6 +620,7 @@ checkNumberMargins = function(data, marginMatrix) {
 #' (typically very rare modalities, on which calibration constraints are very restrictive).
 #' Uses pseudo-"call by reference" via eval.parent because 2 objects are modified :
 #' calibrationMatrix and marginMatrix
+#' @export
 regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibrationVariable, vecModalities, newModality) {
 
   # First, check if number of modalities match in calibrationMatrix and marginMatrix,
@@ -665,6 +713,8 @@ regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibr
 #' so that sum is 1.
 #' @param thresholdAdjustToOne adjust sum(vecTotals) to 1 if difference
 #' is under thresholdAdjustToOne
+#'
+#' @export
 addMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thresholdAdjustToOne = 0.01) {
 
   newMarginMatrix <- marginMatrix
@@ -716,7 +766,7 @@ addMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thresh
   return(newMarginMatrix)
 }
 
-# Modifies margin
+## Modifies margin
 modifyMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thresholdAdjustToOne = 0.01) {
 
   # Delete selected margin
@@ -740,7 +790,7 @@ modifyMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thr
   return(newMarginMatrix)
 }
 
-## TODO : should be private
+## Private function that creates margins to the right format
 createFormattedMargins <- function(data, marginMatrix, popTotal=NULL) {
 
   if(is.null(marginMatrix)) {
