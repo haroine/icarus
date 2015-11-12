@@ -79,7 +79,7 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
   # Selection des variables de calage dans la table
   # (ainsi que leur caractere qualitatif / quantitatif)
   selectVector = marginMatrix[,1]
-  isQuantitative = marginMatrix[,2]
+  isQuantitative = as.numeric(marginMatrix[,2])
 
   isQuantitative[isQuantitative != 0] <- 1
   isQuantitative <- 1 - as.numeric(isQuantitative) # is considered as boolean by R
