@@ -184,7 +184,11 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' @param infinity Only used in the penalized calibration. Use this to tweak the numeric value
 #' of an infinite cost.
 #' @param uCostPenalized Unary cost by which every cost is "costs" column is multiplied
-#' @param lambda The ridge lambda used in penalized calibration.
+#' @param lambda The initial ridge lambda used in penalized calibration. By default, the initial 
+#' lambda is automatically chosen by the algorithm, but you can speed up the search for the optimum
+#' if you already know a lambda close to the lambda_opt corresponding to the gap you set. Be careful,
+#' the search zone is reduced when a lambda is set by the user, so the program may not converge
+#' if the lambda set is too far from the lambda_opt.
 #' @param gap Only useful for penalized calibration. Sets the maximum gap between max and min
 #' calibrated weights / initial weights ratio (and thus is similar to the "bounds"
 #' parameter used in regular calibration)
