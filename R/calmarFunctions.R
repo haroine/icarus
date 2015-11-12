@@ -413,7 +413,7 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
     toWarn = FALSE
     vecTotal = NULL
 
-    if(marginMatrix[i,2] == 0) { # If variable is numeric
+    if(as.numeric(marginMatrix[i,2]) == 0) { # If variable is numeric
 
       sumWeights = data.matrix(data[marginNames[i]])[,1] %*% data.matrix(data[colWeights])[,1]
       sumCalibrated = data.matrix(data[marginNames[i]])[,1] %*% data.matrix(data[colCalibratedWeights])[,1]
