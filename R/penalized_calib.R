@@ -94,9 +94,16 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
     paramInit <- d
   }
 
+  ## Choose method : CG for large problems, BFGS otherwise
+  methodOptimization <- "BFGS"
+    
+  if(length(paramInit) >= 500) {
+    methodOptimization <- "CG"
+  }
+  
   linearOpt <- optim(par = paramInit, toOptimize, Xs=Xs, d=d, total=total
                      , lambda=lambda, costs=costs, distance=distance
-                     , method="BFGS", params=params)
+                     , method=methodOptimization, params=params)
 
   return(linearOpt$par)
 }
