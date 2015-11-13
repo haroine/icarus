@@ -454,14 +454,16 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
         sumCalibrated = sum(data.matrix(data[data[marginNames[i]] == modalities[j],][colCalibratedWeights]))
 
         if(!enteredAsPct) {
-          margin = as.numeric(marginMatrix[i,2+j])*popTotal
+          margin = as.numeric(marginMatrix[i,2+j])
+          tempStatVec = c(sumWeights, sumCalibrated, margin)
         } else {
           margin = as.numeric(marginMatrix[i,2+j])
+          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
         }
 
         #tempStatVec = c(sumWeights, sumCalibrated, margin) # TODO : change here level / structure
 
-        tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
+        # tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
 
         tempStatVec = round(tempStatVec,2)
 
