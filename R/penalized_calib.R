@@ -1,7 +1,6 @@
 ### Partial calibration functions. Are all private, used by the main
 ### "calibration" function
 
-## TODO : remove distances
 penalizedCalib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
                   alpha = NULL, costs, infinity=1e7, uCostPenalized=1e2,
                   maxIter=500, calibTolerance=1e-06, lambda=NULL, gap=NULL) {
@@ -43,8 +42,10 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
   wRegularCalibration <- calib(Xs, d, total, q, "linear")*d
 #   print(calib(Xs, d, total, q, "linear"))
   ## TODO : handle case when no convergence for linear calib (fail)
-  lambdaTest <- distance(wRegularCalibration,d, params) / distanceKhiTwo(costs*(d %*% Xs), costs*total)
-
+  costs_test <- costs
+  costs_test[is.infinite(costs_test)] <- 1e9
+  lambdaTest <- distance(wRegularCalibration,d, params) / distanceKhiTwo(costs_test*(d %*% Xs), costs_test*total)
+  
   if(lambdaTest == 0) {
     lambdaTest <- 1
   }
@@ -93,22 +94,29 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
   if(is.null(paramInit) || length(paramInit) == 0) {
     paramInit <- d
   }
-
-  ## Choose method : CG for large problems, BFGS otherwise
-  methodOptimization <- "BFGS"
-    
-  if(length(paramInit) >= 500) {
-    methodOptimization <- "CG"
-  }
   
-  linearOpt <- optim(par = paramInit, toOptimize, Xs=Xs, d=d, total=total
-                     , lambda=lambda, costs=costs, distance=distance
-                     , method=methodOptimization, params=params)
+  ## Formerly, the optimization was done numerically,
+  ## but since, only the linear method is kept for penalized calibration,
+  ## it can be resolved analytically
+  
+  ## Choose method : CG for large problems, BFGS otherwise
+#   methodOptimization <- "BFGS"
+#   
+#   if(length(paramInit) >= 500) {
+#     methodOptimization <- "CG"
+#   }
+#   linearOpt <- optim(par = paramInit, toOptimize, Xs=Xs, d=d, total=total
+#                      , lambda=lambda, costs=costs, distance=distance
+#                      , method=methodOptimization, params=params)
+#   w_solution = linearOpt$par
+  
+  A <- t(Xs * d * q) %*% Xs
+  C_m_inv <- diag(1/costs)
+  w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
 
-  return(linearOpt$par)
+  return(w_solution)
 }
 
-# total = marginMatrix
 toOptimize <- function(w, Xs,d, total, lambda, costs, distance, params=NULL) {
 
   totalsW <- w %*% Xs
@@ -121,7 +129,8 @@ toOptimize <- function(w, Xs,d, total, lambda, costs, distance, params=NULL) {
 
 cleanCosts <- function(costs, infinity=1e7, uCostPenalized=1e-2) {
   replacedCosts <- costs
-  replacedCosts[is.infinite(replacedCosts) | replacedCosts < 0] <- infinity
+  # replacedCosts[is.infinite(replacedCosts) | replacedCosts < 0] <- infinity
+  replacedCosts[replacedCosts < 0] <- Inf
 
   replacedCosts <- replacedCosts*uCostPenalized
 
@@ -183,7 +192,7 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
     return(w)
   }
 
-  if(maxG - minG <= gap) {
+  if(maxG - minG >= gap) {
     writeLines("Lambda too small")
     return( searchLambda(Xs, d, total, q=rep(1,length(d)),
                                      distance, updateParameters, params, costs,
@@ -228,8 +237,6 @@ formatCosts <- function(costs, marginMatrix, popTotal) {
 }
 
 ###### Distances #######
-
-## TODO : write gradients for theses distances
 
 # This one is a real distance (between two vectors)
 distanceKhiTwo <- function(w,d, params=NULL) {
