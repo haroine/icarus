@@ -184,7 +184,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' @param infinity Only used in the penalized calibration. Use this to tweak the numeric value
 #' of an infinite cost.
 #' @param uCostPenalized Unary cost by which every cost is "costs" column is multiplied
-#' @param lambda The initial ridge lambda used in penalized calibration. By default, the initial 
+#' @param lambda The initial ridge lambda used in penalized calibration. By default, the initial
 #' lambda is automatically chosen by the algorithm, but you can speed up the search for the optimum
 #' if you already know a lambda close to the lambda_opt corresponding to the gap you set. Be careful,
 #' the search zone is reduced when a lambda is set by the user, so the program may not converge
@@ -246,6 +246,11 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
   # (uniform adjustment)
   weights = as.numeric(data.matrix(data[colWeights]))
 
+  ## For tests
+#   Xs_glob <<- matrixCal
+#   total_glob <<- formattedMargins
+#   d_glob <<- weights
+
   if(scale) {
     if(is.null(popTotal)) {
       stop("When scale is TRUE, popTotal cannot be NULL")
@@ -256,8 +261,20 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
 
   # TODO : add catching of "no convergence" exception
   if(is.null(costs)) {
-    g = calib(Xs=matrixCal, d=weights, total=formattedMargins, method=method, bounds=bounds, maxIter=maxIter)
+
+    g <- NULL
+
+    if( (is.numeric(bounds)) || (method != "min") ) {
+      g <- calib(Xs=matrixCal, d=weights, total=formattedMargins, method=method, bounds=bounds, maxIter=maxIter)
+    } else {
+      if( (bounds == "min") || (method == "min")) {
+        g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
+                          , q=rep(1,length(d)), maxIter=maxIter, description=description)
+      }
+    }
+
     data[colCalibratedWeights] = g*weights
+
   } else {
 
     # Forbid popTotal null when gap is selected
@@ -289,8 +306,17 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
     writeLines(paste("Calibration method : ",method, sep=""))
 
     if(! (method %in% c("linear","raking")) && ! is.null(bounds) ) {
-      writeLines(paste("\t L bound : ",bounds[1], sep=""))
-      writeLines(paste("\t U bound : ",bounds[2], sep=""))
+
+      if(is.numeric(bounds)) {
+        writeLines(paste("\t L bound : ",bounds[1], sep=""))
+        writeLines(paste("\t U bound : ",bounds[2], sep=""))
+      }
+
+      if( (bounds == "min") || (method == "min") ) {
+        writeLines(paste("\t L bound : ",min(g), sep=""))
+        writeLines(paste("\t U bound : ",max(g), sep=""))
+      }
+
     }
 
     writeLines(paste("Mean : ",round(mean(weightsRatio),4), sep=""))
