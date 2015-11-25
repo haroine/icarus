@@ -1,15 +1,7 @@
 #### All functions in this file are private methods used by the
 #### "calibration" function
 
-# TODO : Replace bounds by more generic "distanceParams"
-# TODO : remove description=FALSE everywhere
-# Params should be a list containing pointers to useful parameters
-
-# TODO : each distance function comes with an "updateParameters" function
-
-
-# TODO : fonction pour faire le calage avec des paramÃ¨tres et une fonction de distance,
-# et fonction "wrapper", qui sera celle appelÃ©e par l'utilisateur.
+# TODO : each inverseDistance function comes with an "updateParameters" function
 
 # Fonction Wrapper
 calib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
@@ -19,23 +11,27 @@ calib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
   if(!is.null(method)) {
   switch(method,
           linear={
-            distance <- pseudoDistanceLinear
+            inverseDistance <- inverseDistanceLinear
             params <- NULL
             updateParameters <- identity
           },
           raking={
-            distance <- pseudoDistanceRaking
+            inverseDistance <- inverseDistanceRaking
             params <- NULL
             updateParameters <- identity
           },
           logit={
-            distance <- pseudoDistanceLogit
-            # TODO : check params in list are correctly entered
+            inverseDistance <- inverseDistanceLogit
             params <- bounds
             updateParameters <- identity
           },
+           truncated={
+             inverseDistance <- inverseDistanceTruncated
+             params <- bounds
+             updateParameters <- identity
+           },
           curlingHat={
-            distance <- distanceCurlingHat
+            inverseDistance <- distanceCurlingHat
             # TODO : check params in list are correctly entered
             params <- c(0.5,1.5) # For tests only
             updateParameters <- updateParametersCurlingHat
@@ -43,25 +39,25 @@ calib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
           {
             print('By default, raking method selected')
             params <- NULL
-            distance <- pseudoDistanceRaking
+            inverseDistance <- inverseDistanceRaking
             updateParameters <- identity
           }
   )
   } else {
     print('By default, raking method selected')
     params <- NULL
-    distance <- pseudoDistanceRaking
+    inverseDistance <- inverseDistanceRaking
     updateParameters <- identity
   }
   # TODO : additional checks ??
 
-  return(calibAlgorithm(Xs, d, total, q, distance,
+  return(calibAlgorithm(Xs, d, total, q, inverseDistance,
                         updateParameters, params, maxIter, calibTolerance))
 
 }
 
 calibAlgorithm <- function (Xs, d, total, q=rep(1,length(d)),
-                            distance, updateParameters, params,
+                            inverseDistance, updateParameters, params,
                             maxIter=500, calibTolerance=1e-06) {
 
   g <- NULL
@@ -69,7 +65,7 @@ calibAlgorithm <- function (Xs, d, total, q=rep(1,length(d)),
 
   ## Linear optimization algorithm
   lambda = as.matrix(rep(0, ncol(Xs)))
-  wTemp = as.vector(d * distance(Xs %*% lambda * q, params))
+  wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params))
 
   cont <- TRUE
   l <- 1
@@ -80,7 +76,7 @@ calibAlgorithm <- function (Xs, d, total, q=rep(1,length(d)),
     T1 = t(Xs * wTemp)
     phiprim = T1 %*% Xs
     lambda = lambda - ginv(phiprim, tol = toleranceGInv) %*% phi
-    wTemp = as.vector(d * distance(Xs %*% lambda * q, params))
+    wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params))
 
 
     if (any(is.na(wTemp)) | any(is.infinite(wTemp))) {
@@ -118,22 +114,19 @@ calibAlgorithm <- function (Xs, d, total, q=rep(1,length(d)),
 }
 
 
-# TODO : explain clearly that these are
-# not real distances, but inverse of distances
 # TODO : add qk vectors
-# TODO : separate file for distances ?
 
 # Explain why params (only use S3 and not S4 methods)
-pseudoDistanceLinear <- function(x, params=NULL) {
+inverseDistanceLinear <- function(x, params=NULL) {
   return(1+x)
 }
 
-pseudoDistanceRaking <- function(x, params=NULL) {
+inverseDistanceRaking <- function(x, params=NULL) {
   return(exp(x))
 }
 
 # Params are bounds
-pseudoDistanceLogit <- function(x, bounds) {
+inverseDistanceLogit <- function(x, bounds) {
 
   if(length(bounds) != 2) {
     stop("Must enter LO and UP bounds in a vector.
@@ -148,7 +141,7 @@ pseudoDistanceLogit <- function(x, bounds) {
   return(distance)
 }
 
-# TODO : truncated linear
+# TODO : truncated method ?
 # TODO : hyperbolic sine
 
 # TODO : shaped -> "param" function which updates parameters is
