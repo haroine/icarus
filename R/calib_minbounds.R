@@ -30,7 +30,7 @@ minBoundsCalib <- function(Xs, d, total, q=rep(1,length(d)),
 #   simplexSolution <- simplex(a, A1=A1, b1=b1, A3=A3, b3=b3)
 #   simplexSolution <- solveLP(a, bvec=bvec, Amat=Amat, const.dir=const, lpSolve=T,
 #                               maxiter=10000, tol=1e-2, verbose=1)
-  simplexSolution <- lp(direction="min", objective.in = a, const.mat = Amat,
+  simplexSolution <- lpSolve::lp(direction="min", objective.in = a, const.mat = Amat,
                           const.dir = const, const.rhs = bvec)
 
   xSol <- simplexSolution$solution
