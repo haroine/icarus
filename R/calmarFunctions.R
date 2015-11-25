@@ -244,7 +244,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
   # Same rule as in "Calmar" for SAS : if scale is TRUE,
   # calibration is done on weights adjusted for nonresponse
   # (uniform adjustment)
-  weights = as.numeric(data.matrix(data[colWeights]))
+  weights <- as.numeric(data.matrix(data[colWeights]))
 
   ## For tests
 #   Xs_glob <<- matrixCal
@@ -255,7 +255,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
     if(is.null(popTotal)) {
       stop("When scale is TRUE, popTotal cannot be NULL")
     }
-    weights = weights*(popTotal / sum(data.matrix(data[colWeights])) )
+    weights <- weights*(popTotal / sum(data.matrix(data[colWeights])) )
 
   }
 
@@ -312,9 +312,9 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
         writeLines(paste("\t U bound : ",bounds[2], sep=""))
       }
 
-      if( (bounds == "min") || (method == "min") ) {
-        writeLines(paste("\t L bound : ",min(g), sep=""))
-        writeLines(paste("\t U bound : ",max(g), sep=""))
+      if( (bounds == "min") | (method == "min") ) {
+        writeLines(paste("\t L bound : ",round(min(g),4), sep=""))
+        writeLines(paste("\t U bound : ",round(max(g),4), sep=""))
       }
 
     }

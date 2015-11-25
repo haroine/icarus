@@ -4,7 +4,7 @@
 # TODO : each inverseDistance function comes with an "updateParameters" function
 
 # Fonction Wrapper
-calib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
+calib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
                   alpha = NULL,
                   maxIter=500, calibTolerance=1e-06) {
 
@@ -56,9 +56,13 @@ calib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
 
 }
 
-calibAlgorithm <- function (Xs, d, total, q=rep(1,length(d)),
+calibAlgorithm <- function(Xs, d, total, q=NULL,
                             inverseDistance, updateParameters, params,
                             maxIter=500, calibTolerance=1e-06) {
+
+  if(is.null(q)) {
+    q <- rep(1,length(d))
+  }
 
   g <- NULL
   toleranceGInv = .Machine$double.eps # Tolerance when we compute ginv

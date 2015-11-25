@@ -1,7 +1,7 @@
 ### Partial calibration functions. Are all private, used by the main
 ### "calibration" function
 
-penalizedCalib <- function(Xs, d, total, q=rep(1,length(d)), method=NULL, bounds = NULL,
+penalizedCalib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
                   alpha = NULL, costs, infinity=1e7, uCostPenalized=1e2,
                   maxIter=500, calibTolerance=1e-06, lambda=NULL, gap=NULL) {
 
@@ -21,10 +21,14 @@ return(penalCalibAlgorithm(Xs, d, total, q, distance,
 
 }
 
-penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
+penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
                                 distance, updateParameters, params, costs, infinity=1e7, uCostPenalized=1e2
                                 , maxIter=500, calibTolerance=1e-06
                                 , lambda=NULL, setLambdaPerso=FALSE, gap=NULL) {
+
+  if(is.null(q)) {
+    q <- rep(1,length(d))
+  }
 
   ## In this case, penalized calibration has to check with regular calibration
   if( all(cleanCosts(costs, infinity, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), infinity, uCostPenalized)) ) {
@@ -45,7 +49,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
   costs_test <- costs
   costs_test[is.infinite(costs_test)] <- 1e9
   lambdaTest <- distance(wRegularCalibration,d, params) / distanceKhiTwo(costs_test*(d %*% Xs), costs_test*total)
-  
+
   if(lambdaTest == 0) {
     lambdaTest <- 1
   }
@@ -94,14 +98,14 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
   if(is.null(paramInit) || length(paramInit) == 0) {
     paramInit <- d
   }
-  
+
   ## Formerly, the optimization was done numerically,
   ## but since, only the linear method is kept for penalized calibration,
   ## it can be resolved analytically
-  
+
   ## Choose method : CG for large problems, BFGS otherwise
 #   methodOptimization <- "BFGS"
-#   
+#
 #   if(length(paramInit) >= 500) {
 #     methodOptimization <- "CG"
 #   }
@@ -109,7 +113,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=rep(1,length(d)),
 #                      , lambda=lambda, costs=costs, distance=distance
 #                      , method=methodOptimization, params=params)
 #   w_solution = linearOpt$par
-  
+
   A <- t(Xs * d * q) %*% Xs
   C_m_inv <- diag(1/costs)
   w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))

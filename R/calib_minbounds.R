@@ -1,7 +1,7 @@
 ### Functions solving calibration with minimum bounds (for bounded distances).
 ### Are all private, used by the main "calibration" function
 
-minBoundsCalib <- function(Xs, d, total, q=rep(1,length(d)),
+solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE) {
 
   if (!requireNamespace("lpSolve", quietly = TRUE)) {
@@ -50,5 +50,81 @@ minBoundsCalib <- function(Xs, d, total, q=rep(1,length(d)),
   # 0.3368984
 
   return(gSol)
+
+}
+
+minBoundsCalib <- function(Xs, d, total, q=NULL,
+                           maxIter=500, calibTolerance=1e-06, description=TRUE,
+                           precisionBounds=1e-3) {
+
+
+  gSol <- solveMinBoundsCalib(Xs, d, total, q,
+                                  maxIter, calibTolerance, description)
+
+  Lmax <- min(gSol)
+  Umin <- max(gSol)
+
+  digitsPrec <- abs(log(precisionBounds,10))
+
+#   print("Bornes test :")
+  Ltest1 <- round(Lmax - 5*10**(-digitsPrec-1),digitsPrec)
+  Utest1 <- round(Umin + 5*10**(-digitsPrec-1),digitsPrec)
+
+  Ltest <- Ltest1
+  Utest <- Utest1
+
+#   print(Ltest)
+#   print(Utest)
+
+  gFinal <- calib(Xs=Xs, d=d, total=total, method="logit", bounds = c(Ltest,Utest),
+                  maxIter=maxIter, calibTolerance=calibTolerance)
+
+  ## If no convergence, bisection to find the true min Bounds
+  if(is.null(gFinal)) {
+
+    gTestMin <- calib(Xs=Xs, d=d, total=total, method="raking", maxIter=maxIter, calibTolerance=calibTolerance)
+    LtestMin <- min(gTestMin)
+    LtestMax <- max(gTestMin)
+
+    return(bisectMinBounds(c(LtestMin,LtestMax),c(Ltest1,Utest1),gTestMin,
+                                       Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description))
+
+    Ltest <- Ltest1
+    Utest <- Utest1
+
+  }
+
+  return(gFinal)
+
+}
+
+bisectMinBounds <- function(convergentBounds,minBounds,gFinalSauv,
+                            Xs,d,total, method,maxIter, calibTolerance, precisionBounds,
+                            description=TRUE) {
+
+  newBounds <- (minBounds + convergentBounds) / 2
+  Ltest <- newBounds[1]
+  Utest <- newBounds[2]
+
+  if(description) {
+    writeLines(paste("------ Bisection search : ",newBounds[1],";",newBounds[2]))
+  }
+
+  gFinal <- calib(Xs=Xs, d=d, total=total, method="logit", bounds = c(Ltest,Utest),
+                   maxIter=maxIter, calibTolerance=calibTolerance)
+
+  if(is.null(gFinal)) {
+    return( bisectMinBounds(convergentBounds,c(Ltest,Utest),gFinalSauv,
+                            Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description) )
+  } else {
+
+    if(abs(gFinal - gFinalSauv) <= rep(precisionBounds, length(gFinal))) {
+      return(gFinal)
+    } else {
+      return( bisectMinBounds(c(Ltest,Utest),minBounds,gFinal,
+                              Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description) )
+    }
+
+  }
 
 }
