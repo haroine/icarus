@@ -4,9 +4,9 @@
 solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE) {
 
-  if (!requireNamespace("lpSolve", quietly = TRUE)) {
-      stop("Package lpSolve needed for this function to work. Please install it.",
-            call. = FALSE)
+  if (!requireNamespace("Rglpk", quietly = TRUE)) {
+    stop("Package Rglpk needed for this function to work. Please install it.",
+         call. = FALSE)
   }
 
   n <- length(d)
@@ -25,13 +25,9 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
 
   Amat <- rbind(A1,A3)
   bvec <- c(b1,b3)
-  const <- c(rep("<=",n), rep(">=",n), rep("=", length(b3)))
+  const <- c(rep("<=",n), rep(">=",n), rep("==", length(b3)))
 
-#   simplexSolution <- simplex(a, A1=A1, b1=b1, A3=A3, b3=b3)
-#   simplexSolution <- solveLP(a, bvec=bvec, Amat=Amat, const.dir=const, lpSolve=T,
-#                               maxiter=10000, tol=1e-2, verbose=1)
-  simplexSolution <- lpSolve::lp(direction="min", objective.in = a, const.mat = Amat,
-                          const.dir = const, const.rhs = bvec)
+  simplexSolution <- Rglpk::Rglpk_solve_LP(a, Amat, const, bvec)
 
   xSol <- simplexSolution$solution
   minBounds <- xSol[1]
