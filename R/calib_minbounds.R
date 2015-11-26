@@ -55,7 +55,7 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
 
 minBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE,
-                           precisionBounds=1e-3) {
+                           precisionBounds=1e-4) {
 
 
   gSol <- solveMinBoundsCalib(Xs, d, total, q,
@@ -118,7 +118,7 @@ bisectMinBounds <- function(convergentBounds,minBounds,gFinalSauv,
                             Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description) )
   } else {
 
-    if(abs(gFinal - gFinalSauv) <= rep(precisionBounds, length(gFinal))) {
+    if( all(abs(gFinal - gFinalSauv) <= rep(precisionBounds, length(gFinal))) ) {
       return(gFinal)
     } else {
       return( bisectMinBounds(c(Ltest,Utest),minBounds,gFinal,
