@@ -100,6 +100,7 @@ test_that("Calibration on minimum bounds checks out", {
   wCalesMin2 <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
                            , description=FALSE, method="min")
 
+  ## TODO : get weights directly from simplex algorithm to test on it
 #   wCalesMin_save <- c(3.368984,3.368984,16.631016,16.631016,13.689840,3.368984,3.689840,10.106952,6.737968,
 #                       33.262032,33.262032,6.737968,33.048128,33.262032,12.834225)
 
