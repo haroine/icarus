@@ -55,14 +55,24 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
 
 minBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE,
-                           precisionBounds=1e-4) {
+                           precisionBounds=1e-4, forceSimplex=FALSE) {
 
 
-  gSol <- solveMinBoundsCalib(Xs, d, total, q,
-                                  maxIter, calibTolerance, description)
+  if(forceSimplex || nrow(Xs) <= 1000) {
+    
+    gSol <- solveMinBoundsCalib(Xs, d, total, q,
+                                maxIter, calibTolerance, description)
+    
+    Lmax <- min(gSol)
+    Umin <- max(gSol)
+    
+  } else {
+    
+    Lmax <- 1.0
+    Umin <- 1.0
+    
+  }
 
-  Lmax <- min(gSol)
-  Umin <- max(gSol)
 
   digitsPrec <- abs(log(precisionBounds,10))
 
