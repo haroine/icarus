@@ -79,9 +79,14 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
     phi = t(Xs) %*% wTemp - total
     T1 = t(Xs * wTemp)
     phiprim = T1 %*% Xs
-    lambda = lambda - ginv(phiprim, tol = toleranceGInv) %*% phi
-    wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params))
-
+    
+    wTemp <- NA
+    
+    try({
+      lambda = lambda - ginv(phiprim, tol = toleranceGInv) %*% phi
+      wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params))
+      }
+    )
 
     if (any(is.na(wTemp)) | any(is.infinite(wTemp))) {
       warning("No convergence")
