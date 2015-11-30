@@ -231,9 +231,9 @@ formatCosts <- function(costs, marginMatrix, popTotal) {
 
   }
 
-  ## Add popTotal if not NULL
+  ## Add popTotal if not NULL (calibration always exact on this margin)
   if( !is.null(popTotal) ) {
-    costsFormatted <- c(costsFormatted, costs[length(costs)])
+    costsFormatted <- c(costsFormatted, Inf)
   }
 
   return(costsFormatted)
