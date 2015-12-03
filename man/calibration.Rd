@@ -8,8 +8,8 @@ calibration(data, marginMatrix, colWeights = "POIDS",
   colCalibratedWeights = "POIDS_CALES", method = "linear", maxIter = 2500,
   description = TRUE, bounds = NULL, costs = NULL, popTotal = NULL,
   scale = NULL, check = TRUE, infinity = 1e+07, uCostPenalized = 100,
-  lambda = NULL, gap = NULL, exportDistributionImage = NULL,
-  exportDistributionTable = NULL)
+  lambda = NULL, gap = NULL, precisionBounds = 1e-04,
+  exportDistributionImage = NULL, exportDistributionTable = NULL)
 }
 \arguments{
 \item{data}{The dataframe containing the survey data}
@@ -59,6 +59,9 @@ if the lambda set is too far from the lambda_opt.}
 \item{gap}{Only useful for penalized calibration. Sets the maximum gap between max and min
 calibrated weights / initial weights ratio (and thus is similar to the "bounds"
 parameter used in regular calibration)}
+
+\item{precisionBounds}{Only used for calibration on minimum bounds. Desired precision
+for lower and upper reweighting factor, both bounds being as close to 1 as possible}
 
 \item{exportDistributionImage}{File name to which the density plot shown when
 description is TRUE is exported. Requires package "ggplot2"}

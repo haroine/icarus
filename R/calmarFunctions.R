@@ -193,6 +193,8 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' @param gap Only useful for penalized calibration. Sets the maximum gap between max and min
 #' calibrated weights / initial weights ratio (and thus is similar to the "bounds"
 #' parameter used in regular calibration)
+#' @param precisionBounds Only used for calibration on minimum bounds. Desired precision
+#' for lower and upper reweighting factor, both bounds being as close to 1 as possible
 #' @param exportDistributionImage File name to which the density plot shown when
 #' description is TRUE is exported. Requires package "ggplot2"
 #' @param exportDistributionTable File name to which the distribution table of before/after
@@ -204,7 +206,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' @export
 calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWeights="POIDS_CALES", method="linear",
                        maxIter=2500, description=TRUE, bounds=NULL, costs=NULL, popTotal=NULL, scale=NULL, check=TRUE
-                       , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL
+                       , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4
                        , exportDistributionImage=NULL, exportDistributionTable=NULL) {
 
   # By default, scale is TRUE when popTotal is not NULL, false otherwise
@@ -270,7 +272,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
     } else {
       if( (bounds == "min") || (method == "min")) {
         g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
-                          , q=rep(1,length(d)), maxIter=maxIter, description=description)
+                          , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds)
       }
     }
 
