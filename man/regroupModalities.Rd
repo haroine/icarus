@@ -2,7 +2,7 @@
 % Please edit documentation in R/modalities_functions.R
 \name{regroupModalities}
 \alias{regroupModalities}
-\title{Regroup}
+\title{Regroup elements of a vector}
 \usage{
 regroupModalities(column, regroupMatrix, modalities = NULL)
 }
@@ -19,6 +19,11 @@ If not specified, replacement modalities will be 1:length(column)}
 Column vector with regrouped modalities
 }
 \description{
-Regroup
+Regroup the contiguuous elements of a vector under a single value. Which elements should
+be regrouped is indicated by the rows of a matrix. Output vector is NOT a factor.
+}
+\examples{
+regroupModalities(c(1:20), rbind(c(0,5),c(6,18),c(19,Inf)))
+> [1] 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
 }
 

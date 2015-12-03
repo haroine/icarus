@@ -81,15 +81,20 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
 # If "modalities" is not specified, replacement modalities will be 1 -> length(column)
 # TODO : add option for "modalities" to keep first modality of each group as replacement modality
 # Example : regroupModalities(enlDataNeufs$AGEPR, regroupMatrix)
-#' Regroup
+#' Regroup elements of a vector
+#' @description
+#' Regroup the contiguuous elements of a vector under a single value. Which elements should
+#' be regrouped is indicated by the rows of a matrix. Output vector is NOT a factor.
 #' @param column Column vector which values are going to be replaced
 #' @param regroupMatrix Bounds of the values to regroup under the same modality
 #' @param modalities Specify the values of the modalities to use. Must match number of rows
 #' of regroupMatrix
 #' If not specified, replacement modalities will be 1:length(column)
 #' @return Column vector with regrouped modalities
+#' @examples
+#' regroupModalities(c(1:20), rbind(c(0,5),c(6,18),c(19,Inf)))
+#' > [1] 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
 #' @export
-#' ## TODO: example
 regroupModalities = function(column, regroupMatrix, modalities=NULL) {
 
   regroupedColumn = rep(NA, length(column))

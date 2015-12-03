@@ -2,7 +2,7 @@
 % Please edit documentation in R/calmarFunctions.R
 \name{calibration}
 \alias{calibration}
-\title{Performs calibration on margins with lots of customizable parameters}
+\title{Calibration on margins}
 \usage{
 calibration(data, marginMatrix, colWeights = "POIDS",
   colCalibratedWeights = "POIDS_CALES", method = "linear", maxIter = 2500,
@@ -50,7 +50,11 @@ of an infinite cost.}
 
 \item{uCostPenalized}{Unary cost by which every cost is "costs" column is multiplied}
 
-\item{lambda}{The ridge lambda used in penalized calibration.}
+\item{lambda}{The initial ridge lambda used in penalized calibration. By default, the initial
+lambda is automatically chosen by the algorithm, but you can speed up the search for the optimum
+if you already know a lambda close to the lambda_opt corresponding to the gap you set. Be careful,
+the search zone is reduced when a lambda is set by the user, so the program may not converge
+if the lambda set is too far from the lambda_opt.}
 
 \item{gap}{Only useful for penalized calibration. Sets the maximum gap between max and min
 calibrated weights / initial weights ratio (and thus is similar to the "bounds"
@@ -67,6 +71,6 @@ Requires package "ggplot2". Requires package "xtable"}
 column containing the final calibrated weights
 }
 \description{
-Performs calibration on margins with lots of customizable parameters
+Performs calibration on margins with several methods and customizable parameters
 }
 

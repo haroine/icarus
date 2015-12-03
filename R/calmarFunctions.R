@@ -158,8 +158,9 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 # ratio between initial and calibrated weights
 # Careful with lambda, triggers restrictedSearch, meaning searchLambda could never converge
 #########
-#' Performs calibration on margins with lots of customizable parameters
-#'
+#' Calibration on margins
+#' @description
+#' Performs calibration on margins with several methods and customizable parameters
 #' @param data The dataframe containing the survey data
 #' @param marginMatrix The matrix giving the margins for each column variable included
 #' in the calibration problem
