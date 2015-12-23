@@ -2,9 +2,7 @@
 #### All functions in this file are private methods used by the
 #### "calibration" function
 
-# TODO : each inverseDistance function comes with an "updateParameters" function
-
-# Fonction Wrapper
+# Function Wrapper
 calib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
                   alpha = NULL,
                   maxIter=500, calibTolerance=1e-06) {
