@@ -1,6 +1,5 @@
+# copyright (C) 2015 A.Rebecq and M.Chevalier
 library(testthat)
-#library(gaston)
-# source(file.path("..","..","R","calmarFunctions.R"))
 
 context("Test calibration functions")
 
