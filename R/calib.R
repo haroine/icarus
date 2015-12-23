@@ -1,3 +1,4 @@
+# copyright (C) 2015 A.Rebecq and M.Chevalier
 #### All functions in this file are private methods used by the
 #### "calibration" function
 
@@ -69,7 +70,8 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
 
   ## Linear optimization algorithm
   lambda = as.matrix(rep(0, ncol(Xs)))
-  wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params))
+  wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params)[[1]])
+  wUpdate <- d
 
   cont <- TRUE
   l <- 1
@@ -77,16 +79,18 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
   while (cont) {
 
     phi = t(Xs) %*% wTemp - total
-    T1 = t(Xs * wTemp)
+    T1 = t(Xs * wUpdate)
     phiprim = T1 %*% Xs
-    
+   
     wTemp <- NA
     
     try({
       lambda = lambda - ginv(phiprim, tol = toleranceGInv) %*% phi
-      wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params))
+      wTemp = as.vector(d * inverseDistance(Xs %*% lambda * q, params)[[1]])
       }
     )
+	
+	wUpdate <- as.vector(d * inverseDistance(Xs %*% lambda * q, params)[[2]])
 
     if (any(is.na(wTemp)) | any(is.infinite(wTemp))) {
       warning("No convergence")
@@ -101,7 +105,8 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
     if(l >= maxIter) {
       cont <- FALSE
       warning(paste("No convergence in ", maxIter, " iterations."))
-      return(NULL)
+  	  return(NULL)
+  	  return(wTemp)
     }
 
     l <- l+1
@@ -112,7 +117,7 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
 
   ## Return solution if found
   if(l <= maxIter) {
-    g = wTemp/d
+  	g = wTemp/d
     return(g)
   } else {
     warning(paste("No convergence in ", maxIter, " iterations."))
@@ -123,15 +128,19 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
 }
 
 
-# TODO : add qk vectors
+# TODO: add qk vectors
+# TODO: Explain why params in docs (uses S3 and not S4 methods)
 
-# Explain why params (only use S3 and not S4 methods)
+##### Inverse distance functions
+##### Each of these functions returns a list of the closed
+##### form of the inverse functions of the distance used AND
+##### its derivative.
 inverseDistanceLinear <- function(x, params=NULL) {
-  return(1+x)
+  return(list((1+x),0))
 }
 
 inverseDistanceRaking <- function(x, params=NULL) {
-  return(exp(x))
+  return(list(exp(x),exp(x)))
 }
 
 # Params are bounds
@@ -147,7 +156,9 @@ inverseDistanceLogit <- function(x, bounds) {
   A = (U - L) / ((1-L)*(U-1))
   distance = ( L*(U-1) + U*(1-L)*exp(A*x) ) / ( (U-1) + (1-L)*exp(A*x))
 
-  return(distance)
+  fprim <- ( ( (U-L)**2 )*exp(A*x) ) / (((U-1)+(1-L)*exp(A*x))**2)
+  return(list(distance,fprim))
+  
 }
 
 # TODO : truncated method ?
