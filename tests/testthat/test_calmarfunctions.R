@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq and M.Chevalier
+# copyright (C) 2015 A.Rebecq
 library(testthat)
 
 context("Test calibration functions")

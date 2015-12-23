@@ -1,3 +1,4 @@
+# copyright (C) 2015 A.Rebecq
 ### Partial calibration functions. Are all private, used by the main
 ### "calibration" function
 

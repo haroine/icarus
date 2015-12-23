@@ -1,8 +1,4 @@
-# TODO : Mettre ces fonctions dans un fichier source séparé
-
-# TODO : recodeModality function
-
-# TODO : regroupModalities function : pour faire des tranches
+# copyright (C) 2015 A.Rebecq
 
 #' Changes a column containing multiple values
 #' to a matrix of columns containing the dummies

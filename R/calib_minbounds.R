@@ -1,3 +1,4 @@
+# copyright (C) 2015 A.Rebecq
 ### Functions solving calibration with minimum bounds (for bounded distances).
 ### Are all private, used by the main "calibration" function
 

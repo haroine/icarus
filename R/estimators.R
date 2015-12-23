@@ -1,3 +1,4 @@
+# copyright (C) 2015 A.Rebecq
 
 #' Computes the Horvitz-Thompson estimator for the total of a column
 #' @param var column of variable of interest

@@ -1,3 +1,4 @@
+# copyright (C) 2015 A.Rebecq
 
 #' Create Non-response Adjusted Weights using the HRG method
 #'

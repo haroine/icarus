@@ -1,10 +1,6 @@
-
-# TODO : better header for file
-#############################################
-############   Calmar Functions   ###########
-#### Functions designed to calibrate  #######
-### samples in a familiar INSEE setting #####
-#############################################
+# copyright (C) 2015 A.Rebecq
+# Functions designed so that calibration can be made in a familiar
+# setting for Calmar and Calmar2 users
 
 # Remarque : calmarMatrix = "matrice des marges sans la colonne des noms"
 

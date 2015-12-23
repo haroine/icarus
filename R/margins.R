@@ -1,3 +1,5 @@
+# copyright (C) 2015 A.Rebecq
+
 # TODO : add xtable parameters to marginsToTeX parameters
 marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
                          scaleboxTeX=NULL, file=NULL,
