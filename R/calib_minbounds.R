@@ -59,6 +59,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
                            precisionBounds=1e-4, forceSimplex=FALSE) {
 
 
+  ## TODO better selection of use of simplex
   if(forceSimplex || (nrow(Xs)*ncol(Xs)) <= 10000) {
 
     gSol <- solveMinBoundsCalib(Xs, d, total, q,
@@ -100,8 +101,12 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
   if(is.null(gFinal)) {
 
     gTestMin <- calib(Xs=Xs, d=d, total=total, method="raking", maxIter=maxIter, calibTolerance=calibTolerance)
-    LtestMin <- min(gTestMin)
-    LtestMax <- max(gTestMin)
+    Llinear <- min(gTestMin)
+    Ulinear <- max(gTestMin)
+
+    distTo1 <- pmax((1-Llinear), (Ulinear-1))
+    LtestMin <- 1-distTo1
+    LtestMax <- 1+distTo1
 
     return(bisectMinBounds(c(LtestMin,LtestMax),c(Ltest1,Utest1),gTestMin,
                                        Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description))
