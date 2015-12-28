@@ -191,6 +191,9 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' parameter used in regular calibration)
 #' @param precisionBounds Only used for calibration on minimum bounds. Desired precision
 #' for lower and upper reweighting factor, both bounds being as close to 1 as possible
+#' @param forceSimplex Only used for calibration on minimum bounds.Bisection algorithm is used
+#' for matrices whose size exceed 10000. forceSimplex = TRUE forces the use of the simplex algorithm
+#' whatever the size of the problem
 #' @param exportDistributionImage File name to which the density plot shown when
 #' description is TRUE is exported. Requires package "ggplot2"
 #' @param exportDistributionTable File name to which the distribution table of before/after
@@ -202,7 +205,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' @export
 calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWeights="POIDS_CALES", method="linear",
                        maxIter=2500, description=TRUE, bounds=NULL, costs=NULL, popTotal=NULL, scale=NULL, check=TRUE
-                       , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4
+                       , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4, forceSimplex=FALSE
                        , exportDistributionImage=NULL, exportDistributionTable=NULL) {
 
   # By default, scale is TRUE when popTotal is not NULL, false otherwise
@@ -268,7 +271,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
     } else {
       if( (bounds == "min") || (method == "min")) {
         g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
-                          , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds)
+                          , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex)
       }
     }
 
