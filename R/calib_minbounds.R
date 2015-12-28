@@ -59,19 +59,25 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
                            precisionBounds=1e-4, forceSimplex=FALSE) {
 
 
-  if(forceSimplex || nrow(Xs) <= 1000) {
-    
+  if(forceSimplex || (nrow(Xs)*ncol(Xs)) <= 10000) {
+
     gSol <- solveMinBoundsCalib(Xs, d, total, q,
                                 maxIter, calibTolerance, description)
-    
+
     Lmax <- min(gSol)
     Umin <- max(gSol)
-    
+
+    ## As we are sure there is a solution, we can look for it much further
+    ## than we normally would. However, there are sometimes numerical issues
+    ## on the simplex algorithm, so we stop after a long time anyway, and switch
+    ## to bisection
+    maxIter <- 5000
+
   } else {
-    
+
     Lmax <- 1.0
     Umin <- 1.0
-    
+
   }
 
 
