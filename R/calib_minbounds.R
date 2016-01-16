@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2016 A.Rebecq
 ### Functions solving calibration with minimum bounds (for bounded distances).
 ### Are all private, used by the main "calibration" function
 
@@ -16,14 +16,14 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
   IdentityN <- diag(1,n)
   B <- t(diag(d) %*% Xs)
 
-  a <- c(1,rep(0,n))
-
-  A1 <- rbind( cbind(-oneN,IdentityN) , cbind(oneN,IdentityN) )
-  b1 <- c(oneN,oneN)
-
-  A3 <- matrix(cbind(rep(0,nrow(B)+1),rbind(B,zeroN)), ncol= n+1, nrow= nrow(B)+1)
+  a <- c(0,1,rep(0,n))
+  
+  A1 <- rbind( cbind(-oneN,-oneN,IdentityN) , cbind(-oneN,oneN,IdentityN) )
+  b1 <- rep(0,2*n)
+  
+  A3 <- matrix(cbind(rep(0,nrow(B)+1),rep(0,nrow(B)+1),rbind(B,zeroN)), ncol= n+2, nrow= nrow(B)+1)
   b3 <- c(total,0)
-
+  
   Amat <- rbind(A1,A3)
   bvec <- c(b1,b3)
   const <- c(rep("<=",n), rep(">=",n), rep("==", length(b3)))
@@ -33,14 +33,15 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
   simplexSolution <- Rglpk::Rglpk_solve_LP(obj=a, mat=Amat_sparse, dir=const, rhs=bvec)
 
   xSol <- simplexSolution$solution
-  minBounds <- xSol[1]
-  gSol <- xSol[2:(n+1)]
+  center <- xSol[1]
+  minBounds <- xSol[2]
+  gSol <- xSol[3:(n+2)]
   wSol <- gSol * d
 
   if(description) {
     writeLines("Solution found for calibration on minimal bounds:")
-    writeLines(paste("L =",min(xSol)))
-    writeLines(paste("U =",max(xSol)))
+    writeLines(paste("L =",min(gSol)))
+    writeLines(paste("U =",max(gSol)))
   }
 
   ## TODO : what if there is no solution ?
@@ -56,12 +57,15 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE,
                            precisionBounds=1e-4, forceSimplex=FALSE) {
 
-
+  usedSimplex <- FALSE
+  
   ## TODO better selection of use of simplex
   if(forceSimplex || (nrow(Xs)*ncol(Xs)) <= 10000) {
 
     gSol <- solveMinBoundsCalib(Xs, d, total, q,
                                 maxIter, calibTolerance, description)
+    
+    usedSimplex <- TRUE
 
     Lmax <- min(gSol)
     Umin <- max(gSol)
@@ -102,9 +106,17 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
     Llinear <- min(gTestMin)
     Ulinear <- max(gTestMin)
 
-    distTo1 <- pmax((1-Llinear), (Ulinear-1))
-    LtestMin <- 1-distTo1
-    LtestMax <- 1+distTo1
+    ## If bounds were found by the simplex method, bisection is made around these bound.
+    ## If not, bisection looks for a minimal solution symmetric wrt 1
+    if(!usedSimplex) {
+      distTo1 <- pmax((1-Llinear), (Ulinear-1))
+      LtestMin <- 1-distTo1
+      LtestMax <- 1+distTo1
+    } else {
+      LtestMin <- Llinear
+      LtestMax <- Ulinear
+    }
+
 
     return(bisectMinBounds(c(LtestMin,LtestMax),c(Ltest1,Utest1),gTestMin,
                                        Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description))
