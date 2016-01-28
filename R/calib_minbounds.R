@@ -2,6 +2,7 @@
 ### Functions solving calibration with minimum bounds (for bounded distances).
 ### Are all private, used by the main "calibration" function
 
+## Search for tight bounds by simplex algorithm
 solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE) {
 
@@ -53,6 +54,7 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
 
 }
 
+## General function for calibration on tight/min bounds
 minBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE,
                            precisionBounds=1e-4, forceSimplex=FALSE) {
@@ -131,6 +133,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
 
 }
 
+## Search for tight bounds by bisection (sub-optimal algorithm)
 bisectMinBounds <- function(convergentBounds,minBounds,gFinalSauv,
                             Xs,d,total, method,maxIter, calibTolerance, precisionBounds,
                             description=TRUE) {
