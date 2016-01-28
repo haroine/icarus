@@ -59,8 +59,9 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
 
   usedSimplex <- FALSE
   
-  ## TODO better selection of use of simplex
-  if(forceSimplex || (nrow(Xs)*ncol(Xs)) <= 10000) {
+  ## For matrices containing more than 1e8 elements, do not use simplex
+  ## (it might cause memory issues)
+  if(forceSimplex || (nrow(Xs)*ncol(Xs)) <= 1e8) {
 
     gSol <- solveMinBoundsCalib(Xs, d, total, q,
                                 maxIter, calibTolerance, description)
