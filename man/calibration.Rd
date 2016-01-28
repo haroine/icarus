@@ -9,7 +9,8 @@ calibration(data, marginMatrix, colWeights = "POIDS",
   description = TRUE, bounds = NULL, costs = NULL, popTotal = NULL,
   scale = NULL, check = TRUE, infinity = 1e+07, uCostPenalized = 100,
   lambda = NULL, gap = NULL, precisionBounds = 1e-04,
-  exportDistributionImage = NULL, exportDistributionTable = NULL)
+  forceSimplex = FALSE, exportDistributionImage = NULL,
+  exportDistributionTable = NULL)
 }
 \arguments{
 \item{data}{The dataframe containing the survey data}
@@ -62,6 +63,11 @@ parameter used in regular calibration)}
 
 \item{precisionBounds}{Only used for calibration on minimum bounds. Desired precision
 for lower and upper reweighting factor, both bounds being as close to 1 as possible}
+
+\item{forceSimplex}{Only used for calibration on tight bounds.Bisection algorithm is used
+for matrices whose size exceed 1e8. forceSimplex = TRUE forces the use of the simplex algorithm
+whatever the size of the problem (you might want to set this parameter to TRUE if you
+have a large memory size)}
 
 \item{exportDistributionImage}{File name to which the density plot shown when
 description is TRUE is exported. Requires package "ggplot2"}

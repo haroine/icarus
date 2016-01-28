@@ -191,9 +191,10 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 #' parameter used in regular calibration)
 #' @param precisionBounds Only used for calibration on minimum bounds. Desired precision
 #' for lower and upper reweighting factor, both bounds being as close to 1 as possible
-#' @param forceSimplex Only used for calibration on minimum bounds.Bisection algorithm is used
-#' for matrices whose size exceed 10000. forceSimplex = TRUE forces the use of the simplex algorithm
-#' whatever the size of the problem
+#' @param forceSimplex Only used for calibration on tight bounds.Bisection algorithm is used
+#' for matrices whose size exceed 1e8. forceSimplex = TRUE forces the use of the simplex algorithm
+#' whatever the size of the problem (you might want to set this parameter to TRUE if you
+#' have a large memory size)
 #' @param exportDistributionImage File name to which the density plot shown when
 #' description is TRUE is exported. Requires package "ggplot2"
 #' @param exportDistributionTable File name to which the distribution table of before/after

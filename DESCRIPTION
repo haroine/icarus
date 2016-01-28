@@ -10,9 +10,11 @@ Description: Gaston provides user-friendly tools to analyze non-respnse in
     non-response (hot-deck). Another main feature of Gaston is to provide a
     nice setting for calibration (format is close from the one used in the
     popular "Calmar" macro for SAS).
-Depends:
+Depends: 
     R (>= 3.1.1)
 License: GPLv3
 LazyData: true
-Suggests:
-    testthat
+Suggests: 
+    testthat,
+    ggplot2,
+    Rglpk
