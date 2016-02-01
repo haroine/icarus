@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 # Functions designed so that calibration can be made in a familiar
 # setting for Calmar and Calmar2 users
 
@@ -231,15 +231,11 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
       stop("NAs found in calibration variables")
     }
 
-    # TODO : Add check marginMatrix -> check if number of modalities in calibration
-    # variables matches marginMatrix
+    # check if number of modalities in calibration variables matches marginMatrix
     if(!checkNumberMargins(data, marginMatrix)) stop("Error in number of modalities.")
-
-    # TODO : check that sum on all categorial variables is the same
 
   }
 
-  ## TODO : replace using createFormattedMargins
   marginCreation <- createFormattedMargins(data, marginMatrix, popTotal)
   matrixCal = marginCreation[[2]]
   formattedMargins = marginCreation[[1]]
@@ -564,33 +560,6 @@ marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
   return(marginStatsDF)
 
 }
-
-
-# Does the hot-deck imputation of NAs in calibration variables
-# Hot-deck neighbors are selected via margins (of marginMatrix)
-## TODO : deprecate and remove
-imputCalibrationVars = function(data, marginMatrix) {
-
-  dataUpdated = data
-  N = nrow(marginMatrix)
-
-  for(i in 1:N) {
-
-    marginName = marginMatrix[i,1]
-    writeLines(paste("Imputation of column : ",marginName))
-
-    if(nrow(data.matrix(data[is.na(data[marginName]),])) > 0) {
-      vecParams = marginMatrix[,1]
-      vecParams = vecParams[-i]
-
-      dataUpdated[is.na(dataUpdated[marginName]),][marginName] = imputViaNeighbors(data, colToImput=marginName, vecParams, method="first")
-    }
-
-  }
-
-  return(dataUpdated)
-}
-
 
 # Check validity of marginMatrix
 checkMarginMatrix = function(marginMatrix) {
