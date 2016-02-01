@@ -1,7 +1,7 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 library(testthat)
 
-context("Test calibration functions")
+context("Test calibration functions on small dataset")
 
 test_that("Calibration functions check out with Calmar", {
 
