@@ -145,6 +145,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 }
 
 
+## TODO : should be private ??
 #' Gives stats about the calibration process: totals after/before calibration vs. margins
 #' Same as first panels output in Calmar/Calmar 2
 #' @param data dataframe containing the survey data
@@ -292,6 +293,9 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
 }
 
 
+## TODO : doc
+#' Same as calibrationMarginStats, but allows for 
+#' @export
 marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
                         , colCalibratedWeights=NULL, calibThreshold=1.0) {
 
@@ -321,6 +325,8 @@ marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
 
 }
 
+## TODO : deprecate, never used
+## Replaced by checkNumberMargins
 # Check validity of marginMatrix
 checkMarginMatrix = function(marginMatrix) {
 
