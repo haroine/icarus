@@ -92,6 +92,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
     
   }
   
+  ## TODO : add parameter pct
   marginCreation <- createFormattedMargins(data, marginMatrix, popTotal)
   matrixCal = marginCreation[[2]]
   formattedMargins = marginCreation[[1]]

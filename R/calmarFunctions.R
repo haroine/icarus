@@ -111,6 +111,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
     }
     else
     {
+      ## TODO : change by using parameter pct
       if(!is.null(popTotal)) {
         popTotalNum <- popTotal
       } else {
@@ -119,6 +120,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
 
       n = calmarMatrix[curRow,1]
 
+      ## TODO : change to pct
       ## If categorial margins are not entered as percentages,
       ## do not multiply by popTotal (except if it is popVector !)
       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
@@ -297,7 +299,7 @@ marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
                                             , colCalibratedWeights, calibThreshold)
   marginStatsDF <- do.call(rbind.data.frame, listMarginStats)
 
-  ## Column difference is re-computed from scratcg
+  ## Column difference is re-computed from scratch
   marginStatsDF <- marginStatsDF[,-c(4)]
   if( is.null(colCalibratedWeights) ) {
 
