@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 
 # TODO : add xtable parameters to marginsToTeX parameters
 marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
@@ -45,8 +45,8 @@ marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
     captionTeX <- paste(caption, " -- total population : ", round(popTotal,0),sep="")
   }
   
-  print(xtable(marginDF, caption=captionTeX, label=label), include.rownames = FALSE, include.colnames = FALSE, 
-               , floating = TRUE, scalebox=scaleboxTeX, file=file
+  print(xtable(marginDF, caption=captionTeX, label=label), include.rownames = FALSE, include.colnames = FALSE,
+               floating = TRUE, scalebox=scaleboxTeX, file=file
         )
 
 }
