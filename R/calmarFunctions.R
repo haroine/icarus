@@ -87,7 +87,7 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
   return(matrixCal)
 }
 
-formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
+formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=TRUE)
 {
   # Create empty vector of margins
   cMatrixCopy = calmarMatrix
@@ -112,6 +112,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
     else
     {
       ## TODO : change by using parameter pct
+      ## ... this means that pct is considered TRUE by default
       if(!is.null(popTotal)) {
         popTotalNum <- popTotal
       } else {
@@ -123,10 +124,25 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
       ## TODO : change to pct
       ## If categorial margins are not entered as percentages,
       ## do not multiply by popTotal (except if it is popVector !)
+      
+#       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) && (is.null(popTotal) || !pct) ) {
+#         warning(paste("All margins in variable ",curRow,"are less than 1 : should they be considered as percentages ?"))
+#       }
+      
       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
         popTotalNum <- 1
       }
-
+      
+#       if(pct) {
+#         if(is.null(popTotal)) {
+#           stop("popTotal has to be set when pct is TRUE")
+#         } else {
+#           popTotalNum <- popTotal
+#         }
+#       } else {
+#         popTotalNum <- 1
+#       }
+      
       for(j in 2:(n+1))
       {
         cMargins[i] = calmarMatrix[curRow,j]*popTotalNum
@@ -561,7 +577,7 @@ modifyMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thr
 }
 
 ## Private function that creates margins to the right format
-createFormattedMargins <- function(data, marginMatrix, popTotal=NULL) {
+createFormattedMargins <- function(data, marginMatrix, popTotal=NULL, pct=TRUE) {
 
   if(is.null(marginMatrix)) {
 
@@ -591,7 +607,7 @@ createFormattedMargins <- function(data, marginMatrix, popTotal=NULL) {
 
     matrixCal = createCalibrationMatrix(marginMatrix,data, popVector)
 
-    formattedMargins = formatMargins(calmarMatrix, matrixCal, popTotal)
+    formattedMargins = formatMargins(calmarMatrix, matrixCal, popTotal, pct)
 
   }
 
