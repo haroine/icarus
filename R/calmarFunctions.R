@@ -259,7 +259,6 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
         sumWeights = sum(data.matrix(data[data[marginNames[i]] == modalities[j],][colWeights]))
         sumCalibrated = sum(data.matrix(data[data[marginNames[i]] == modalities[j],][colCalibratedWeights]))
 
-        print(enteredAsPct)
         if(!enteredAsPct) {
           ## By convention, margin for categorical variables are given in percentages
           margin = as.numeric(marginMatrix[i,2+j])
