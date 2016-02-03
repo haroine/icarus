@@ -166,7 +166,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
         writeLines(paste("\t U bound : ",bounds[2], sep=""))
       }
       
-      if( (bounds == "min") | (method == "min") ) {
+      if( (bounds == "min") || (method == "min") ) {
         writeLines(paste("\t L bound : ",round(min(g),4), sep=""))
         writeLines(paste("\t U bound : ",round(max(g),4), sep=""))
       }
