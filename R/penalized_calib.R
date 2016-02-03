@@ -1,9 +1,9 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 ### Partial calibration functions. Are all private, used by the main
 ### "calibration" function
 
 penalizedCalib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
-                  alpha = NULL, costs, infinity=1e7, uCostPenalized=1e2,
+                  alpha = NULL, costs, uCostPenalized=1e2,
                   maxIter=500, calibTolerance=1e-06, lambda=NULL, gap=NULL) {
 
 ## No other method than linear is valid for penalized calibration
@@ -17,13 +17,13 @@ if(!is.null(lambda)) {
 # TODO : additional checks ??
 
 return(penalCalibAlgorithm(Xs, d, total, q, distance,
-                      updateParameters, params, costs, infinity=infinity, uCostPenalized=uCostPenalized
+                      updateParameters, params, costs, uCostPenalized=uCostPenalized
                       , maxIter, calibTolerance, lambda=lambda, setLambdaPerso=setLambdaPerso, gap=gap))
 
 }
 
 penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
-                                distance, updateParameters, params, costs, infinity=1e7, uCostPenalized=1e2
+                                distance, updateParameters, params, costs, uCostPenalized=1e2
                                 , maxIter=500, calibTolerance=1e-06
                                 , lambda=NULL, setLambdaPerso=FALSE, gap=NULL) {
 
@@ -32,14 +32,14 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
   }
 
   ## In this case, penalized calibration has to check with regular calibration
-  if( all(cleanCosts(costs, infinity, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), infinity, uCostPenalized)) ) {
+  if( all(cleanCosts(costs, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), uCostPenalized)) ) {
     matchClassicCalibration <- TRUE
   } else {
     matchClassicCalibration <- FALSE
   }
 
   if(!is.null(costs)) {
-      costs <- cleanCosts(costs, infinity, uCostPenalized)
+      costs <- cleanCosts(costs, uCostPenalized)
     } else {
       stop("Can't process NULL costs !")
   }
@@ -132,7 +132,7 @@ toOptimize <- function(w, Xs,d, total, lambda, costs, distance, params=NULL) {
   return(returnD)
 }
 
-cleanCosts <- function(costs, infinity=1e7, uCostPenalized=1e-2) {
+cleanCosts <- function(costs, uCostPenalized=1e-2) {
   replacedCosts <- costs
   # replacedCosts[is.infinite(replacedCosts) | replacedCosts < 0] <- infinity
   replacedCosts[replacedCosts < 0] <- Inf

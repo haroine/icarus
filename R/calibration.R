@@ -27,15 +27,13 @@
 #' ("truncated" and "logit")
 #' @param costs The penalized calibration method will be used, using costs defined by this
 #' vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given
-#' a default that can be adjusted through parameter "infinity"
+#' an infinite cost (coefficient of C^-1 matrix is 0)
 #' @param popTotal Precise the total population if margins are defined by relative value in
 #' marginMatrix (percentages)
 #' @param scale If TRUE, stats (including bounds) on ratio calibrated weights / initial weights are
 #' done on a vector multiplied by the weighted non-response ratio (ratio population total /
 #' total of initial weights). Has same behavior as "ECHELLE=0" in Calmar.
 #' @param check performs a few check about the dataframe. TRUE by default
-#' @param infinity Only used in the penalized calibration. Use this to tweak the numeric value
-#' of an infinite cost.
 #' @param uCostPenalized Unary cost by which every cost is "costs" column is multiplied
 #' @param lambda The initial ridge lambda used in penalized calibration. By default, the initial
 #' lambda is automatically chosen by the algorithm, but you can speed up the search for the optimum
@@ -62,7 +60,7 @@
 #' @export
 calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWeights="POIDS_CALES", method="linear",
                        maxIter=2500, description=TRUE, bounds=NULL, costs=NULL, popTotal=NULL, scale=NULL, check=TRUE
-                       , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4, forceSimplex=FALSE
+                       , uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4, forceSimplex=FALSE
                        , exportDistributionImage=NULL, exportDistributionTable=NULL) {
   
   # By default, scale is TRUE when popTotal is not NULL, false otherwise
@@ -74,7 +72,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
   
   ## Clean costs for penalized calibration
   #   if(!is.null(costs)) {
-  #     costs <- cleanCosts(costs, infinity, uCostPenalized)
+  #     costs <- cleanCosts(costs, uCostPenalized)
   #   }
   
   if(check) {
@@ -142,7 +140,7 @@ calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWe
     costsFormatted <- formatCosts(costs, marginMatrix, popTotal)
     
     wCal = penalizedCalib(Xs=matrixCal, d=weights, total=formattedMargins, method=method
-                          , bounds=bounds, costs=costsFormatted, infinity=infinity, uCostPenalized=uCostPenalized
+                          , bounds=bounds, costs=costsFormatted, uCostPenalized=uCostPenalized
                           , maxIter=maxIter, lambda=lambda, gap=gap)
     data[colCalibratedWeights] = data.matrix(wCal)
     g = wCal / weights
