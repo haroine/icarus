@@ -18,21 +18,24 @@
 #' in the calibration problem
 #' @param colWeights The name of the column containing the initial weights in the survey
 #' dataframe
-#' @param colCalibratedWeights The name of the column of final calibrated weights
 #' @param method The method used to calibrate. Can be "linear", "raking", "logit", "truncated"
-#' @param maxIter The maximum number of iterations before stopping
-#' @param description If TRUE, output stats about the calibration process as well as the
-#' graph of the density of the ratio calibrated weights / initial weights
 #' @param bounds Two-element vector containing the lower and upper bounds for bounded methods
 #' ("truncated" and "logit")
 #' @param costs The penalized calibration method will be used, using costs defined by this
 #' vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given
 #' an infinite cost (coefficient of C^-1 matrix is 0)
+#' @param gap Only useful for penalized calibration. Sets the maximum gap between max and min
+#' calibrated weights / initial weights ratio (and thus is similar to the "bounds"
+#' parameter used in regular calibration)
 #' @param popTotal Precise the total population if margins are defined by relative value in
 #' marginMatrix (percentages)
+#' @param pct TODO
 #' @param scale If TRUE, stats (including bounds) on ratio calibrated weights / initial weights are
 #' done on a vector multiplied by the weighted non-response ratio (ratio population total /
 #' total of initial weights). Has same behavior as "ECHELLE=0" in Calmar.
+#' @param description If TRUE, output stats about the calibration process as well as the
+#' graph of the density of the ratio calibrated weights / initial weights
+#' @param maxIter The maximum number of iterations before stopping
 #' @param check performs a few check about the dataframe. TRUE by default
 #' @param uCostPenalized Unary cost by which every cost is "costs" column is multiplied
 #' @param lambda The initial ridge lambda used in penalized calibration. By default, the initial
@@ -40,28 +43,25 @@
 #' if you already know a lambda close to the lambda_opt corresponding to the gap you set. Be careful,
 #' the search zone is reduced when a lambda is set by the user, so the program may not converge
 #' if the lambda set is too far from the lambda_opt.
-#' @param gap Only useful for penalized calibration. Sets the maximum gap between max and min
-#' calibrated weights / initial weights ratio (and thus is similar to the "bounds"
-#' parameter used in regular calibration)
 #' @param precisionBounds Only used for calibration on minimum bounds. Desired precision
 #' for lower and upper reweighting factor, both bounds being as close to 1 as possible
 #' @param forceSimplex Only used for calibration on tight bounds.Bisection algorithm is used
 #' for matrices whose size exceed 1e8. forceSimplex = TRUE forces the use of the simplex algorithm
 #' whatever the size of the problem (you might want to set this parameter to TRUE if you
 #' have a large memory size)
+#' @param colCalibratedWeights The name of the column of final calibrated weights
 #' @param exportDistributionImage File name to which the density plot shown when
 #' description is TRUE is exported. Requires package "ggplot2"
 #' @param exportDistributionTable File name to which the distribution table of before/after
-#' weights shown when description is TRUE is exported.
-#' Requires package "ggplot2". Requires package "xtable"
+#' weights shown when description is TRUE is exported. Requires package "xtable"
 #'
 #' @return column containing the final calibrated weights
 #'
 #' @export
-calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWeights="POIDS_CALES", method="linear",
-                       maxIter=2500, description=TRUE, bounds=NULL, costs=NULL, popTotal=NULL, scale=NULL, check=TRUE
-                       , uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4, forceSimplex=FALSE
-                       , exportDistributionImage=NULL, exportDistributionTable=NULL) {
+calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL
+                       , costs=NULL, gap=NULL, popTotal=NULL, pct=TRUE, scale=NULL, description=TRUE
+                       , maxIter=2500, check=TRUE, uCostPenalized=1e2, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE
+                       , colCalibratedWeights="calWeights", exportDistributionImage=NULL, exportDistributionTable=NULL) {
   
   # By default, scale is TRUE when popTotal is not NULL, false otherwise
   if(is.null(popTotal)) {
