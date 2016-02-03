@@ -29,7 +29,8 @@
 #' parameter used in regular calibration)
 #' @param popTotal Precise the total population if margins are defined by relative value in
 #' marginMatrix (percentages)
-#' @param pct TODO
+#' @param pct If TRUE, margins for categorical variables are considered to
+#' be entered as percentages. popTotal must then be set. (FALSE by default)
 #' @param scale If TRUE, stats (including bounds) on ratio calibrated weights / initial weights are
 #' done on a vector multiplied by the weighted non-response ratio (ratio population total /
 #' total of initial weights). Has same behavior as "ECHELLE=0" in Calmar.
@@ -59,7 +60,7 @@
 #'
 #' @export
 calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL
-                       , costs=NULL, gap=NULL, popTotal=NULL, pct=TRUE, scale=NULL, description=TRUE
+                       , costs=NULL, gap=NULL, popTotal=NULL, pct=FALSE, scale=NULL, description=TRUE
                        , maxIter=2500, check=TRUE, uCostPenalized=1e2, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE
                        , colCalibratedWeights="calWeights", exportDistributionImage=NULL, exportDistributionTable=NULL) {
   
@@ -90,8 +91,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     
   }
   
-  ## TODO : add parameter pct
-  marginCreation <- createFormattedMargins(data, marginMatrix, popTotal)
+  marginCreation <- createFormattedMargins(data, marginMatrix, popTotal, pct)
   matrixCal = marginCreation[[2]]
   formattedMargins = marginCreation[[1]]
   
@@ -218,7 +218,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
   if(description) {
     writeLines("")
     writeLines("################### Comparison Margins Before/After calibration ###################")
-    print(calibrationMarginStats(data=data, marginMatrix=marginMatrix, popTotal=popTotal, colWeights=colWeights, colCalibratedWeights=colCalibratedWeights))
+    print(calibrationMarginStats(data=data, marginMatrix=marginMatrix, popTotal=popTotal, pct=pct, colWeights=colWeights, colCalibratedWeights=colCalibratedWeights))
   }
   
   # Plot density of weights ratio

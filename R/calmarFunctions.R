@@ -87,7 +87,7 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
   return(matrixCal)
 }
 
-formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=TRUE)
+formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FALSE)
 {
   # Create empty vector of margins
   cMatrixCopy = calmarMatrix
@@ -113,11 +113,11 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=TRU
     {
       ## TODO : change by using parameter pct
       ## ... this means that pct is considered TRUE by default
-      if(!is.null(popTotal)) {
-        popTotalNum <- popTotal
-      } else {
-        popTotalNum <- 1
-      }
+#       if(!is.null(popTotal)) {
+#         popTotalNum <- popTotal
+#       } else {
+#         popTotalNum <- 1
+#       }
 
       n = calmarMatrix[curRow,1]
 
@@ -125,23 +125,23 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=TRU
       ## If categorial margins are not entered as percentages,
       ## do not multiply by popTotal (except if it is popVector !)
       
-#       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) && (is.null(popTotal) || !pct) ) {
-#         warning(paste("All margins in variable ",curRow,"are less than 1 : should they be considered as percentages ?"))
-#       }
-      
-      if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
-        popTotalNum <- 1
+      if( all(calmarMatrix[curRow,2:(n+1)] < 1) && (is.null(popTotal) || !pct) ) {
+        warning(paste("All margins in variable ",curRow,"are less than 1 : should they be considered as percentages ?"))
       }
       
-#       if(pct) {
-#         if(is.null(popTotal)) {
-#           stop("popTotal has to be set when pct is TRUE")
-#         } else {
-#           popTotalNum <- popTotal
-#         }
-#       } else {
+#       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
 #         popTotalNum <- 1
 #       }
+      
+      if(pct) {
+        if(is.null(popTotal)) {
+          stop("popTotal has to be set when pct is TRUE")
+        } else {
+          popTotalNum <- popTotal
+        }
+      } else {
+        popTotalNum <- 1
+      }
       
       for(j in 2:(n+1))
       {
@@ -169,7 +169,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=TRU
 #' @param popTotal total of population, useful if margins are entered in relative value
 #' @param colWeights name of weights column in the dataframe
 #' @export
-calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights="POIDS", colCalibratedWeights=NULL, calibThreshold=1.0) {
+calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
 
   displayCalibratedWeights <- TRUE
 
@@ -187,9 +187,13 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
   enteredAsPct <- FALSE
   popTotalMarginDisplay <- popTotal
   if(is.null(popTotal)) {
-    enteredAsPct <- TRUE
+    enteredAsPct <- FALSE
     popTotal <- sum(data[colCalibratedWeights])
     popTotalMarginDisplay <- NA
+  }
+  
+  if(pct) {
+    enteredAsPct <- TRUE
   }
 
   toWarn = FALSE
@@ -255,12 +259,15 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
         sumWeights = sum(data.matrix(data[data[marginNames[i]] == modalities[j],][colWeights]))
         sumCalibrated = sum(data.matrix(data[data[marginNames[i]] == modalities[j],][colCalibratedWeights]))
 
+        print(enteredAsPct)
         if(!enteredAsPct) {
+          ## By convention, margin for categorical variables are given in percentages
           margin = as.numeric(marginMatrix[i,2+j])
-          tempStatVec = c(sumWeights, sumCalibrated, margin)
+          # tempStatVec = c(sumWeights, sumCalibrated, margin)
+          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
         } else {
           margin = as.numeric(marginMatrix[i,2+j])
-          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
+          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin*100)
         }
 
         #tempStatVec = c(sumWeights, sumCalibrated, margin) # TODO : change here level / structure
@@ -312,10 +319,10 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
 ## TODO : doc
 #' Same as calibrationMarginStats, but allows for 
 #' @export
-marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
+marginStats <- function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights
                         , colCalibratedWeights=NULL, calibThreshold=1.0) {
 
-  listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, colWeights
+  listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, pct, colWeights
                                             , colCalibratedWeights, calibThreshold)
   marginStatsDF <- do.call(rbind.data.frame, listMarginStats)
 
@@ -577,7 +584,7 @@ modifyMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thr
 }
 
 ## Private function that creates margins to the right format
-createFormattedMargins <- function(data, marginMatrix, popTotal=NULL, pct=TRUE) {
+createFormattedMargins <- function(data, marginMatrix, popTotal=NULL, pct=FALSE) {
 
   if(is.null(marginMatrix)) {
 

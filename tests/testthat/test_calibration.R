@@ -13,7 +13,7 @@ test_that("Calibration functions check out with Calmar", {
                          , method="linear", description=FALSE)
   
   wCalRaking <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
-                         , method="raking", description=FALSE)
+                         , method="raking", description=FALSE, pct=FALSE)
   
   wCalLogit <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
                             , method="logit", bounds=c(0.2,1.3), description=FALSE)
@@ -26,13 +26,13 @@ test_that("Calibration functions check out with Calmar", {
   popTotal <- 50000
   
   wCalLin2 <- calibration(data=sample, marginMatrix=table_margins_2, colWeights="weight"
-                         , method="linear", description=FALSE, popTotal=popTotal)
+                         , method="linear", description=FALSE, popTotal=popTotal, pct=TRUE)
   
   wCalRaking2 <- calibration(data=sample, marginMatrix=table_margins_2, colWeights="weight"
-                            , method="raking", description=FALSE, popTotal=popTotal)
+                            , method="raking", description=FALSE, popTotal=popTotal, pct=TRUE)
   
   wCalLogit2 <- calibration(data=sample, marginMatrix=table_margins_2, colWeights="weight"
-                           , method="logit", bounds=c(0.2,1.3), description=FALSE, popTotal=popTotal)
+                           , method="logit", bounds=c(0.2,1.3), description=FALSE, popTotal=popTotal, pct=TRUE)
   
   
   expect_equal(wCalLin2, poptest_calmar$weight_cal_lin_2, tolerance=1e-6)

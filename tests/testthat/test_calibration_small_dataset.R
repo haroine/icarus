@@ -39,10 +39,10 @@ test_that("Calibration functions check out with Calmar", {
 #   mar3_2 <- c("service",2,0.45,0.55,0)
 #   mar4_2 <- c("salaire", 0, 470000,0,0)
 #   margins_2 <- rbind(mar1_2, mar2_2, mar3_2, mar4_2)
-#
+# 
 #   wCalesLin_2 <- calibration(data=data_ex2, marginMatrix=margins_2, colWeights="poids"
-#                            , method="linear", description=TRUE, popTotal=250)
-#
+#                            , method="linear", description=TRUE, popTotal=250, pct=TRUE)
+
 
 })
 
