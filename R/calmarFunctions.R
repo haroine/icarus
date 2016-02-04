@@ -161,13 +161,19 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
 }
 
 
-## TODO : should be private ??
-#' Gives stats about the calibration process: totals after/before calibration vs. margins
-#' Same as first panels output in Calmar/Calmar 2
+#' Gives stats about the calibration process: differences between 
+#' totals after/before calibration and margins. Totals for categorical
+#' variables are displayed in percentages.
+#' (same as first panels output in Calmar/Calmar 2)
+#' Output is a list, which might not be convenient for exports (e.g. for integration
+#' into a scientific report). In such cases,
+#' use function "marginStats", which outputs a dataframe.
 #' @param data dataframe containing the survey data
 #' @param marginMatrix matrix of margins
 #' @param popTotal total of population, useful if margins are entered in relative value
+#' @param pct Set this to true if margins for categorical variables are written in percentages
 #' @param colWeights name of weights column in the dataframe
+#' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
 #' @export
 calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
 
@@ -318,14 +324,22 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
   return(marginStatsList)
 }
 
-## Attention, pct ou non les variables catégorielles sont toujours affichées en
-## pourcentages
-## As
-## TODO : doc
-#' Same as calibrationMarginStats, but allows for 
+
+#' Just like calibrationMarginStats, gives stats about the calibration process: 
+#' differences between totals after/before calibration and margins. Totals for categorical
+#' variables are displayed in percentages.
+#' Same as first panels output in Calmar/Calmar 2.
+#' Output is a dataframe, which might be more convenient to export than a list
+#' (e.g. for integration into reports)
+#' @param data dataframe containing the survey data
+#' @param marginMatrix matrix of margins
+#' @param pct Set this to true if margins for categorical variables are written in percentages
+#' @param popTotal total of population, useful if margins are entered in relative value
+#' @param colWeights name of weights column in the dataframe
+#' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
 #' @export
-marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights
-                        , colCalibratedWeights=NULL, calibThreshold=1.0, pct=FALSE) {
+marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
+                        , colCalibratedWeights=NULL, calibThreshold=1.0) {
 
   listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, pct, colWeights
                                             , colCalibratedWeights, calibThreshold)
@@ -357,10 +371,7 @@ marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights
     
     
   } else {
-
     colnames(marginStatsDF) <- c("Before calibration","After calibration","Margin")
-    marginStatsDF$difference <- round(abs(data.matrix(marginStatsDF["Margin"]) - data.matrix(marginStatsDF["After calibration"]))/data.matrix(marginStatsDF["Margin"])*100,2)
-
   }
 
   return(marginStatsDF)
