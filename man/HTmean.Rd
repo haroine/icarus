@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators.R
 \name{HTmean}
 \alias{HTmean}
-\title{Computes the Horvitz-Thompson estimator for the mean of a column}
+\title{Weighted estimator for the mean}
 \usage{
 HTmean(var, weights, popTot = NULL)
 }
@@ -15,6 +15,10 @@ HTmean(var, weights, popTot = NULL)
 Estimated mean
 }
 \description{
-Computes the Horvitz-Thompson estimator for the mean of a column
+Computes the weighted estimator for the mean of a column. Alias for
+\code{\link{weightedMean}}
+}
+\seealso{
+\code{\link{weightedMean}}
 }
 

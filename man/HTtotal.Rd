@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimators.R
 \name{HTtotal}
 \alias{HTtotal}
-\title{Computes the Horvitz-Thompson estimator for the total of a column}
+\title{Weighted estimator for total}
 \usage{
 HTtotal(var, weights)
 }
@@ -15,6 +15,10 @@ HTtotal(var, weights)
 Estimated total
 }
 \description{
-Computes the Horvitz-Thompson estimator for the total of a column
+Computes the weighted estimator for the total of a column. Alias for
+\code{\link{weightedTotal}}
+}
+\seealso{
+\code{\link{weightedTotal}}
 }
 
