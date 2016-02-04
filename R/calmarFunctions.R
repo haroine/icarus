@@ -188,7 +188,11 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
   popTotalMarginDisplay <- popTotal
   if(is.null(popTotal)) {
     enteredAsPct <- FALSE
-    popTotal <- sum(data[colCalibratedWeights])
+    if(displayCalibratedWeights) {
+      popTotal <- sum(data[colCalibratedWeights])
+    } else {
+      popTotal <- sum(data[colWeights])
+    }
     popTotalMarginDisplay <- NA
   }
   
@@ -314,34 +318,50 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
   return(marginStatsList)
 }
 
-
+## Attention, pct ou non les variables catégorielles sont toujours affichées en
+## pourcentages
+## As
 ## TODO : doc
 #' Same as calibrationMarginStats, but allows for 
 #' @export
-marginStats <- function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights
-                        , colCalibratedWeights=NULL, calibThreshold=1.0) {
+marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights
+                        , colCalibratedWeights=NULL, calibThreshold=1.0, pct=FALSE) {
 
   listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, pct, colWeights
                                             , colCalibratedWeights, calibThreshold)
   marginStatsDF <- do.call(rbind.data.frame, listMarginStats)
 
-  ## Column difference is re-computed from scratch
+  ## Compute column difference
   marginStatsDF <- marginStatsDF[,-c(4)]
   if( is.null(colCalibratedWeights) ) {
 
     marginStatsDF <- marginStatsDF[,-c(2)] # Do not display calibrated weigths column
-    colnames(marginStatsDF) <- c("Before calibration","Margin")
-    marginStatsDF$difference <- round(abs(data.matrix(marginStatsDF["Margin"]) - data.matrix(marginStatsDF["Before calibration"]))/data.matrix(marginStatsDF["Margin"])*100,2)
+    
+    marginStatsDF[,3] <- round(abs(marginStatsDF[,2] - marginStatsDF[,1])/marginStatsDF[,2]*100,2)
+    
+    ## Correct coefficients for categorical variables if entered as percentages
+    nModalCateg <- 0
+    for(i in 1:nrow(marginMatrix)) {
+      nModal <- as.numeric(marginMatrix[i,2]) 
+      if(nModal > 0) {
 
+        for(j in 1:(nModal)) {
+          ## Offset of 1 because of popTotal in first line of marginStatsDF
+          marginStatsDF[i+nModalCateg+1,3] <- round(abs(marginStatsDF[i+nModalCateg+1,2] - marginStatsDF[i+nModalCateg+1,1]),2)
+          if(j < nModal) nModalCateg <- nModalCateg + 1
+        }
+      }
+    }
+    
+    names(marginStatsDF) <- c("Before calibration","Margin", "Difference (pct)")
+    
+    
   } else {
 
     colnames(marginStatsDF) <- c("Before calibration","After calibration","Margin")
     marginStatsDF$difference <- round(abs(data.matrix(marginStatsDF["Margin"]) - data.matrix(marginStatsDF["After calibration"]))/data.matrix(marginStatsDF["Margin"])*100,2)
 
-
   }
-
-
 
   return(marginStatsDF)
 
