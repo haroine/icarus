@@ -40,3 +40,23 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalLogit2, poptest_calmar$weight_cal_logit_2, tolerance=1e-6)
   
 })
+
+test_that("Test margin stats", {
+  
+  data("population_test")
+  
+  sample <- dataPop[dataPop$weight > 0,]
+  
+  testStats1 <- marginStats(sample, table_margins_1, colWeights = "weight")
+  testStats2 <- marginStats(sample, table_margins_2, colWeights = "weight", pct=T, popTotal = 50000)
+  
+  expect_equal(testStats1[13,1], 18.94)
+  expect_equal(testStats1[14,2], 20.02)
+  expect_equal(testStats1[15,3], 1.44)
+  
+  expect_equal(testStats2[17,3], 0.27)
+  expect_equal(testStats2[18,1], 30.21)
+  expect_equal(testStats2[16,2], 10)
+  
+  
+})
