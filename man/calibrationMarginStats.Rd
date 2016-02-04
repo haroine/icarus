@@ -2,11 +2,10 @@
 % Please edit documentation in R/calmarFunctions.R
 \name{calibrationMarginStats}
 \alias{calibrationMarginStats}
-\title{Gives stats about the calibration process: totals after/before calibration vs. margins
-Same as first panels output in Calmar/Calmar 2}
+\title{Stats for initial weights, calibrated weights, and margins.}
 \usage{
-calibrationMarginStats(data, marginMatrix, popTotal = NULL,
-  colWeights = "POIDS", colCalibratedWeights = NULL, calibThreshold = 1)
+calibrationMarginStats(data, marginMatrix, popTotal = NULL, pct = FALSE,
+  colWeights, colCalibratedWeights = NULL, calibThreshold = 1)
 }
 \arguments{
 \item{data}{dataframe containing the survey data}
@@ -15,10 +14,29 @@ calibrationMarginStats(data, marginMatrix, popTotal = NULL,
 
 \item{popTotal}{total of population, useful if margins are entered in relative value}
 
+\item{pct}{Set this to true if margins for categorical variables are written in percentages}
+
 \item{colWeights}{name of weights column in the dataframe}
+
+\item{colCalibratedWeights}{name of calibrated weights column in the dataframe (if applicable)}
+}
+\value{
+List containing stats on weights and margins
 }
 \description{
-Gives stats about the calibration process: totals after/before calibration vs. margins
-Same as first panels output in Calmar/Calmar 2
+Gives stats about the calibration process: differences between
+totals after/before calibration and margins. Totals for categorical
+variables are displayed in percentages.
+(same as first panels output in Calmar/Calmar 2)
+Output is a list, which might not be convenient for exports (e.g. for integration
+into a scientific report). In such cases,
+use function marginStats, which outputs a dataframe.
 }
+\seealso{
+\code{\link{marginStats}}
+}
+\keyword{description,}
+\keyword{results}
+\keyword{statistics,}
+\keyword{stats,}
 

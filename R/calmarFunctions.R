@@ -160,20 +160,25 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
   return(cMargins)
 }
 
-
+#' Stats for initial weights, calibrated weights, and margins.
+#' @description
 #' Gives stats about the calibration process: differences between 
 #' totals after/before calibration and margins. Totals for categorical
 #' variables are displayed in percentages.
 #' (same as first panels output in Calmar/Calmar 2)
 #' Output is a list, which might not be convenient for exports (e.g. for integration
 #' into a scientific report). In such cases,
-#' use function "marginStats", which outputs a dataframe.
+#' use function marginStats, which outputs a dataframe.
 #' @param data dataframe containing the survey data
 #' @param marginMatrix matrix of margins
 #' @param popTotal total of population, useful if margins are entered in relative value
 #' @param pct Set this to true if margins for categorical variables are written in percentages
 #' @param colWeights name of weights column in the dataframe
 #' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
+#'
+#' @return List containing stats on weights and margins
+#' @seealso \code{\link{marginStats}}
+#' @keywords statistics, stats, description, results
 #' @export
 calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
 
@@ -324,8 +329,9 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
   return(marginStatsList)
 }
 
-
-#' Just like calibrationMarginStats, gives stats about the calibration process: 
+#' Stats for initial weights, calibrated weights, and margins.
+#' @description
+#' Just like \code{\link{calibrationMarginStats}}, gives stats about the calibration process: 
 #' differences between totals after/before calibration and margins. Totals for categorical
 #' variables are displayed in percentages.
 #' Same as first panels output in Calmar/Calmar 2.
@@ -337,6 +343,10 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
 #' @param popTotal total of population, useful if margins are entered in relative value
 #' @param colWeights name of weights column in the dataframe
 #' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
+#'
+#' @return Dataframe containing stats on weights and margins
+#' @seealso \code{\link{calibrationMarginStats}}
+#' @keywords statistics, stats, description, results
 #' @export
 marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
                         , colCalibratedWeights=NULL, calibThreshold=1.0) {
