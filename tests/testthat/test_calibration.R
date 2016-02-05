@@ -39,6 +39,47 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalRaking2, poptest_calmar$weight_cal_raking_2, tolerance=1e-6)
   expect_equal(wCalLogit2, poptest_calmar$weight_cal_logit_2, tolerance=1e-6)
   
+  ## Test that calibrated estimators are equal to population totals
+  totalsCalVar <- sapply(table_margins_1[,1], function(x) { return(sum(dataPop[,x])) })
+  expect_equal( sapply(table_margins_1[,1], function(x) { return(HTtotal(sample[,x], wCalLin)) }),
+                totalsCalVar,
+                tolerance=1e-6)
+  expect_equal( sapply(table_margins_1[,1], function(x) { return(HTtotal(sample[,x], wCalLogit)) }),
+                totalsCalVar,
+                tolerance=1e-6)
+  expect_equal( sapply(table_margins_1[,1], function(x) { return(HTtotal(sample[,x], wCalRaking2)) }),
+                totalsCalVar,
+                tolerance=1e-6)
+  
+  ########### Tests with non-response and scale factor
+  ## TODO : check parameters for logit calibration
+  sampleNR <- sample[sample$responding==1,]
+  
+  wCalLinNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
+                         , method="linear", description=FALSE, scale=TRUE)
+  wCalRakingNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
+                           , method="raking", description=FALSE, scale=TRUE)
+#   wCalLogitNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
+#                            , method="logit", bounds=c(0.2,1.9), description=TRUE, scale=TRUE)
+  
+  expect_equal(wCalLinNR, poptest_calmar_nr$weight_cal_lin, tolerance=1e-6)
+  expect_equal(wCalRakingNR, poptest_calmar_nr$weight_cal_raking, tolerance=1e-6)
+#   expect_equal(wCalLogitNR, poptest_calmar_nr$weight_cal_logit, tolerance=1e-6)
+#   
+#   testDistrib <- poptest_calmar_nr$weight_cal_logit/sampleNR$weight * sum(sampleNR$weight) / 50000 
+#   print(summary(testDistrib))
+  
+  wCalLinNR2 <- calibration(data=sampleNR, marginMatrix=table_margins_2, popTot = 50000, pct=T, colWeights="weight"
+                           , method="linear", description=FALSE, scale=TRUE)
+  wCalRakingNR2 <- calibration(data=sampleNR, marginMatrix=table_margins_2, popTot = 50000, pct=T, colWeights="weight"
+                              , method="raking", description=FALSE, scale=TRUE)
+  #   wCalLogitNR2 <- calibration(data=sampleNR, marginMatrix=table_margins_2, popTot = 50000, pct=T, colWeights="weight"
+  #                            , method="logit", bounds=c(0.2,1.9), description=TRUE, scale=TRUE)
+  
+  expect_equal(wCalLinNR2, poptest_calmar_nr$weight_cal_lin_2, tolerance=1e-6)
+  expect_equal(wCalRakingNR2, poptest_calmar_nr$weight_cal_raking_2, tolerance=1e-6)
+  #   expect_equal(wCalLogitNR2, poptest_calmar_nr$weight_cal_logit_2, tolerance=1e-6)
+  
 })
 
 test_that("Test margin stats", {
@@ -57,6 +98,9 @@ test_that("Test margin stats", {
   expect_equal(testStats2[17,3], 0.27)
   expect_equal(testStats2[18,1], 30.21)
   expect_equal(testStats2[16,2], 10)
+  
+  ## TODO : test marginStats with calibration weights
+  ## (on penalized calibration for instance)
   
   
 })
