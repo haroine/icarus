@@ -45,7 +45,7 @@ weightedTotal <- function(var, weights) {
   }
 
 
-  return(var %*% weights)
+  return(as.numeric(var %*% weights))
 }
 
 #' Weighted estimator for the mean
