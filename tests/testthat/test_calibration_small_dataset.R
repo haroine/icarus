@@ -43,7 +43,11 @@ test_that("Calibration functions check out with Calmar", {
 #   wCalesLin_2 <- calibration(data=data_ex2, marginMatrix=margins_2, colWeights="poids"
 #                            , method="linear", description=TRUE, popTotal=250, pct=TRUE)
 
-
+  ## Test estimators value
+  expect_equal(HTmean(data_ex2$cinema, wCalesLin), 2.93, tolerance=1e-2)
+  expect_equal(HTmean(data_ex2$cinema, wCalesRaking), 3.22, tolerance=1e-2)
+  expect_equal(HTmean(data_ex2$cinema, wCalesLogit1), 3.14, tolerance=1e-2)
+  
 })
 
 test_that("Penalized calibration checks out", {
