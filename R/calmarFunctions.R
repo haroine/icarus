@@ -333,10 +333,11 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
 #' @description
 #' Just like \code{\link{calibrationMarginStats}}, gives stats about the calibration process: 
 #' differences between totals after/before calibration and margins. Totals for categorical
-#' variables are displayed in percentages.
-#' Same as first panels output in Calmar/Calmar 2.
+#' variables are displayed in percentages. The last column, named "difference", shows
+#' the difference (in percentage points) between initial estimates and margins (if colCalibratedWeights is NULL) 
+#' or between calibrated estimates and margins (if colCalibratedWeights is not NULL).
 #' Output is a dataframe, which might be more convenient to export than a list
-#' (e.g. for integration into reports)
+#' (e.g. for integration into reports).
 #' @param data dataframe containing the survey data
 #' @param marginMatrix matrix of margins
 #' @param pct Set this to true if margins for categorical variables are written in percentages
@@ -363,29 +364,47 @@ marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
     
     marginStatsDF[,3] <- round(abs(marginStatsDF[,2] - marginStatsDF[,1])/marginStatsDF[,2]*100,2)
     
-    ## Correct coefficients for categorical variables if entered as percentages
-    nModalCateg <- 0
-    for(i in 1:nrow(marginMatrix)) {
-      nModal <- as.numeric(marginMatrix[i,2]) 
-      if(nModal > 0) {
-
-        for(j in 1:(nModal)) {
-          ## Offset of 1 because of popTotal in first line of marginStatsDF
-          marginStatsDF[i+nModalCateg+1,3] <- round(abs(marginStatsDF[i+nModalCateg+1,2] - marginStatsDF[i+nModalCateg+1,1]),2)
-          if(j < nModal) nModalCateg <- nModalCateg + 1
-        }
-      }
-    }
+    ## Correct coefficients for categorical variables
+    marginStatsDF <- correctCoefsCategorical(marginStatsDF, marginMatrix)
     
     names(marginStatsDF) <- c("Before calibration","Margin", "Difference (pct)")
     
     
   } else {
-    colnames(marginStatsDF) <- c("Before calibration","After calibration","Margin")
+    
+    marginStatsDF[,4] <- round(abs(marginStatsDF[,3] - marginStatsDF[,2])/marginStatsDF[,3]*100,2)
+    
+    ## Correct coefficients for categorical variables
+    marginStatsDF <- correctCoefsCategorical(marginStatsDF, marginMatrix, ncol1=2, ncol2=3, ncol3=4)
+    
+    colnames(marginStatsDF) <- c("Before calibration","After calibration","Margin","Difference (pct)")
   }
 
   return(marginStatsDF)
 
+}
+
+## Private function, used in marginMatrix to account for
+## categorical variables, whose stats are displayed in percentages
+correctCoefsCategorical <- function(marginStatsDF_init, marginMatrix, ncol1=1, ncol2=2, ncol3=3) {
+  
+  marginStatsDF <- marginStatsDF_init
+  
+  nModalCateg <- 0
+  for(i in 1:nrow(marginMatrix)) {
+    nModal <- as.numeric(marginMatrix[i,2]) 
+    if(nModal > 0) {
+      
+      for(j in 1:(nModal)) {
+        ## Offset of 1 because of popTotal in first line of marginStatsDF
+        marginStatsDF[i+nModalCateg+1,ncol3] <- round(abs(marginStatsDF[i+nModalCateg+1,ncol2] - marginStatsDF[i+nModalCateg+1,ncol1]),2)
+        if(j < nModal) nModalCateg <- nModalCateg + 1
+      }
+    }
+  }
+  
+  return(marginStatsDF)
+  
 }
 
 ## TODO : deprecate, never used
