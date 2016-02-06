@@ -61,7 +61,7 @@
 #' @export
 calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL
                        , costs=NULL, gap=NULL, popTotal=NULL, pct=FALSE, scale=NULL, description=TRUE
-                       , maxIter=2500, check=TRUE, uCostPenalized=1e2, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE
+                       , maxIter=2500, check=TRUE, uCostPenalized=1, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE
                        , colCalibratedWeights="calWeights", exportDistributionImage=NULL, exportDistributionTable=NULL) {
   
   # By default, scale is TRUE when popTotal is not NULL, false otherwise

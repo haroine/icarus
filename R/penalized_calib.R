@@ -74,7 +74,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
 #       lambda <- lambdaTest*1e15
       lambda <- 1
     } else {
-      lambda <- lambdaTest
+      lambda <- lambdaTest*1e15
     }
 
   }
@@ -109,25 +109,11 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
     paramInit <- d
   }
 
-  ## Formerly, the optimization was done numerically,
-  ## but since, only the linear method is kept for penalized calibration,
-  ## it can be resolved analytically
-
-  ## Choose method : CG for large problems, BFGS otherwise
-#   methodOptimization <- "BFGS"
-#
-#   if(length(paramInit) >= 500) {
-#     methodOptimization <- "CG"
-#   }
-#   linearOpt <- optim(par = paramInit, toOptimize, Xs=Xs, d=d, total=total
-#                      , lambda=lambda, costs=costs, distance=distance
-#                      , method=methodOptimization, params=params)
-#   w_solution = linearOpt$par
-
+  ## Solve with linear method (analytical solution)
   A <- t(Xs * d * q) %*% Xs
   C_m_inv <- diag(1/costs)
   w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
-
+  
   return(w_solution)
 }
 
