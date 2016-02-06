@@ -1,15 +1,9 @@
 Package: gaston
-Title: GASTON (Gaston, for Analysis, Study and Treatment of Nonresponse)
-Version: 0.1
-Authors@R: c(person("Antoine Rebecq-Roussel", role=c("aut","cre"),
+Title: gaston (Gaston, for Analysis, Study and Treatment of Nonresponse)
+Version: 0.2
+Authors@R: c(person("Antoine Rebecq", role=c("aut","cre"),
     email = "haroine.git@rebecq.fr"))
-Description: Gaston provides user-friendly tools to analyze non-respnse in
-    survey sampling. Gaston mainly focuses on total nonresponse for now (and
-    provides simple functions to correct it using HRG-type methods (HRG =
-    Homogenous Response Groups)), but features a few methods useful for partial
-    non-response (hot-deck). Another main feature of Gaston is to provide a
-    nice setting for calibration (format is close from the one used in the
-    popular "Calmar" macro for SAS).
+Description: gaston provides user-friendly tools for calibration in survey sampling. The package is production-oriented, and its interface is inspired by the famous popular macro "Calmar" for SAS, so that "Calmar" users can quickly get used to gaston. In addition to calibration (with linear, raking and logit methods), gaston features functions for calibration on tight bounds and penalized calibration.
 Depends: 
     R (>= 3.1.1)
 License: GPLv3
