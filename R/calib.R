@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq and M.Chevalier
+# copyright (C) 2014-2016 A.Rebecq and M.Chevalier
 #### All functions in this file are private methods used by the
 #### "calibration" function
 

@@ -105,18 +105,35 @@ test_that("Test margin stats", {
                       , method="linear", description=FALSE, popTotal = 50000)
   
   testCosts <- rep(Inf, length(table_margins_1[,1]))
-#   testCosts[11] <- 100
-#   testCosts[10] <- 1
+
   sample$wCal_penal <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
                              , method="linear", description=FALSE, costs=testCosts, popTotal = 50000)
   
   testStats3 <- marginStats(sample, table_margins_1, colWeights = "weight", colCalibratedWeights = "wCal", popTotal = 50000)
-  
   expect_equal(testStats3[,4], rep(0, length(testStats3[,1])))
   
   testStats4 <- marginStats(sample, table_margins_1, colWeights = "weight", colCalibratedWeights = "wCal_penal", popTotal = 50000)
+  expect_equal(testStats4[,4], rep(0, length(testStats4[,1])))
   
-  # print(testCosts)
-  # print(testStats4)
+  #### TODO : improve testing for penalized calib
+  
+  # testCosts2 <- rep(Inf, length(table_margins_1[,1]))
+#   testCosts2[1] <- 1
+#   testCosts2[2] <- 1
+#   testCosts2[3] <- 1
+#   testCosts2[4] <- 1
+#   testCosts2[5] <- 1
+  # testCosts2[2] <- 100
+  # testCosts2[3] <- 1
+  
+  # print(testCosts2)
+  
+  ## TODO : set gap
+#   sample$wCal_penal2 <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+#                                    , method="linear", description=FALSE, costs=testCosts2, popTotal=50000)
+#   
+#   testStats5 <- marginStats(sample, table_margins_1, colWeights = "weight", colCalibratedWeights = "wCal_penal2", popTotal = 50000)
+#   
+#   print(testStats5)
   
 })

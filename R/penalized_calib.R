@@ -32,7 +32,8 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
   }
 
   ## In this case, penalized calibration has to check with regular calibration
-  if( all(cleanCosts(costs, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), uCostPenalized)) ) {
+  checkInfiniteCosts <- cleanCosts(costs, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), uCostPenalized)
+  if( all(checkInfiniteCosts) ) {
     matchClassicCalibration <- TRUE
   } else {
     matchClassicCalibration <- FALSE
@@ -44,9 +45,17 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
       stop("Can't process NULL costs !")
   }
 
+  wRegularCalibration <- NULL
   wRegularCalibration <- calib(Xs, d, total, q, "linear")*d
-#   print(calib(Xs, d, total, q, "linear"))
+  
+  if(!is.null(wRegularCalibration) && matchClassicCalibration) {
+    warning("All costs are infinite: return regular calibration with linear distance")
+    return(wRegularCalibration)
+  }
+  
   ## TODO : handle case when no convergence for linear calib (fail)
+  ## (cannot process the following steps)
+  
   costs_test <- costs
   costs_test[is.infinite(costs_test)] <- 1e9
   lambdaTest <- distance(wRegularCalibration,d, params) / distanceKhiTwo(costs_test*(d %*% Xs), costs_test*total)
