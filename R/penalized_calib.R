@@ -7,7 +7,7 @@ penalizedCalib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
                   maxIter=500, calibTolerance=1e-06, lambda=NULL, gap=NULL) {
 
 ## No other method than linear is valid for penalized calibration
-distance <- distanceKhiTwo
+# distance <- distanceKhiTwo
 
 setLambdaPerso <- FALSE
 if(!is.null(lambda)) {
@@ -16,17 +16,20 @@ if(!is.null(lambda)) {
 
 # TODO : additional checks ??
 
-return(penalCalibAlgorithm(Xs, d, total, q, distance,
+return(penalCalibAlgorithm(Xs, d, total, q, method,
                       updateParameters, params, costs, uCostPenalized=uCostPenalized
                       , maxIter, calibTolerance, lambda=lambda, setLambdaPerso=setLambdaPerso, gap=gap))
 
 }
 
 penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
-                                distance, updateParameters, params, costs, uCostPenalized=1e2
+                                method, updateParameters, params, costs, uCostPenalized=1e2
                                 , maxIter=500, calibTolerance=1e-06
                                 , lambda=NULL, setLambdaPerso=FALSE, gap=NULL) {
 
+  ## TODO : change if method is not linear
+  distance <- distanceKhiTwo
+  
   if(is.null(q)) {
     q <- rep(1,length(d))
   }
@@ -96,7 +99,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
     }
 
     return( searchLambda(Xs, d, total, q,
-                                     distance, updateParameters, params, costs,
+                                     method, updateParameters, params, costs,
                                      maxIter, calibTolerance
                                       , lastLambdas=NULL, lambdaBackup=1
                                       , lambdaTest=lambda, setLambdaPerso=setLambdaPerso
@@ -109,11 +112,15 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
     paramInit <- d
   }
 
-  ## Solve with linear method (analytical solution)
-  A <- t(Xs * d * q) %*% Xs
-  C_m_inv <- diag(1/costs)
-  w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
-  
+
+  if(identical(method,"linear")) {
+    ## Solve with linear method (analytical solution)
+    A <- t(Xs * d * q) %*% Xs
+    C_m_inv <- diag(1/costs)
+    w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
+  } else {
+    warning("Algorithm for other distances not implemented yet")
+  }
   return(w_solution)
 }
 
@@ -139,12 +146,15 @@ cleanCosts <- function(costs, uCostPenalized=1e-2) {
 
 # @param lastLambdas = c(lastLambdaTooSmall, lastLambdaTooBig)
 searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
-                         distance, updateParameters, params, costs,
+                         method, updateParameters, params, costs,
                          maxIter=500, calibTolerance=1e-06
                          , lastLambdas=NULL, lambdaBackup=1, lambdaTest=NULL
                          , setLambdaPerso=FALSE
                          , gap, count=0) {
-
+  
+  ## TODO : change if method is not linear
+  distance <- distanceKhiTwo
+  
   # In pratice, optimal lambdas can be found in a very wide domain,
   # so we must set very wide default values
   defaultLastLambdas <- c(1e-50,1e50)
@@ -177,7 +187,7 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
   writeLines(paste("Test with lambda = ", lambdaTest, sep=""))
 
   w <- penalCalibAlgorithm(Xs, d, total, q,
-                                       distance, updateParameters, params, costs,
+                                       method, updateParameters, params, costs,
                                        maxIter, calibTolerance
                                        , lambda=lambdaTest, setLambdaPerso=FALSE)
 
@@ -195,14 +205,14 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
   if(maxG - minG >= gap) {
     writeLines("Lambda too small")
     return( searchLambda(Xs, d, total, q=rep(1,length(d)),
-                                     distance, updateParameters, params, costs,
+                                     method, updateParameters, params, costs,
                                      maxIter=500, calibTolerance=1e-06
                                      , lastLambdas=c(lambdaTest, lastLambdas[2]), lambdaBackup=lambdaTest
                                       , gap=gap, count=count+1) )
   } else {
     writeLines("Lambda too big")
     return( searchLambda(Xs, d, total, q=rep(1,length(d)),
-                         distance, updateParameters, params, costs,
+                         method, updateParameters, params, costs,
                          maxIter=500, calibTolerance=1e-06
                          , lastLambdas=c(lastLambdas[1], lambdaTest), lambdaBackup=lambdaTest
                          , gap=gap, count=count+1) )
