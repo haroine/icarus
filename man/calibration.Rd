@@ -7,8 +7,8 @@
 calibration(data, marginMatrix, colWeights, method = "linear",
   bounds = NULL, costs = NULL, gap = NULL, popTotal = NULL,
   pct = FALSE, scale = NULL, description = TRUE, maxIter = 2500,
-  check = TRUE, uCostPenalized = 100, lambda = NULL,
-  precisionBounds = 1e-04, forceSimplex = FALSE,
+  check = TRUE, uCostPenalized = 1, lambda = NULL,
+  precisionBounds = 1e-04, forceSimplex = FALSE, forceBisection = FALSE,
   colCalibratedWeights = "calWeights", exportDistributionImage = NULL,
   exportDistributionTable = NULL)
 }
@@ -66,6 +66,9 @@ for lower and upper reweighting factor, both bounds being as close to 1 as possi
 for matrices whose size exceed 1e8. forceSimplex = TRUE forces the use of the simplex algorithm
 whatever the size of the problem (you might want to set this parameter to TRUE if you
 have a large memory size)}
+
+\item{forceBisection}{Only used for calibration on tight bounds. Forces the use of the bisection
+algorithm to solve calibration on tight bounds}
 
 \item{colCalibratedWeights}{The name of the column of final calibrated weights}
 

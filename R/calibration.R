@@ -50,6 +50,8 @@
 #' for matrices whose size exceed 1e8. forceSimplex = TRUE forces the use of the simplex algorithm
 #' whatever the size of the problem (you might want to set this parameter to TRUE if you
 #' have a large memory size)
+#' @param forceBisection Only used for calibration on tight bounds. Forces the use of the bisection
+#' algorithm to solve calibration on tight bounds
 #' @param colCalibratedWeights The name of the column of final calibrated weights
 #' @param exportDistributionImage File name to which the density plot shown when
 #' description is TRUE is exported. Requires package "ggplot2"
@@ -61,7 +63,7 @@
 #' @export
 calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL
                        , costs=NULL, gap=NULL, popTotal=NULL, pct=FALSE, scale=NULL, description=TRUE
-                       , maxIter=2500, check=TRUE, uCostPenalized=1, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE
+                       , maxIter=2500, check=TRUE, uCostPenalized=1, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE, forceBisection=FALSE
                        , colCalibratedWeights="calWeights", exportDistributionImage=NULL, exportDistributionTable=NULL) {
   
   # By default, scale is TRUE when popTotal is not NULL, false otherwise
@@ -123,7 +125,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     } else {
       if( (bounds == "min") || (method == "min")) {
         g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
-                            , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex)
+                            , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex, forceBisection=forceBisection)
       }
     }
     
