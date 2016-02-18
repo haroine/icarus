@@ -119,7 +119,28 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
     C_m_inv <- diag(1/costs)
     w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
   } else {
-    warning("Algorithm for other distances not implemented yet")
+    
+    ## Solve for raking method (entropy distance) by ICRS algorithm
+    wTemp <- paramInit
+    A <- t(Xs * d * q) %*% Xs
+    C_m_inv <- diag(1/costs)
+    cont <- TRUE
+    while(cont) {
+      wTempBackup <- wTemp
+      qTemp <- as.vector(2*(wTemp - d) / (d * distanceRaking(wTemp,d)[[2]]))
+      
+      qTemp[is.na(qTemp)] <- 0
+      qTemp[is.infinite(qTemp)] <- 0
+      
+      A <- t(Xs * d * q*qTemp) %*% Xs
+      wTemp <- d + d*q*qTemp* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
+      
+      if( all(abs(wTemp - wTempBackup)) <= calibTolerance ) {
+        cont <- FALSE
+        w_solution <- wTemp
+      }
+    }
+    
   }
   return(w_solution)
 }
@@ -286,11 +307,14 @@ distanceTruncated <- function(w,d,bounds, infinity=1e10) {
   return(sum(distance))
 }
 
+## List with distance and its derivative
 distanceRaking <- function(w,d, params=NULL) {
 
   distanceVec <- (w/d)*log(w/d) - (w/d) + 1
   distance <- d*distanceVec
+  
+  distancePrime <- log(w/d)
 
-  return( sum(distance) )
+  return( list(sum(distance), sum(distancePrime)) )
 }
 
