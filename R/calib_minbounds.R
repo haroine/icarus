@@ -105,7 +105,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
   ## If no convergence, bisection to find the true min Bounds
   if(is.null(gFinal)) {
 
-    gTestMin <- calib(Xs=Xs, d=d, total=total, method="raking", maxIter=maxIter, calibTolerance=calibTolerance)
+    gTestMin <- calib(Xs=Xs, d=d, total=total, method="linear", maxIter=maxIter, calibTolerance=calibTolerance)
     Llinear <- min(gTestMin)
     Ulinear <- max(gTestMin)
 
