@@ -19,6 +19,9 @@ HTtotal <- function(var, weights) {
 #' \code{\link{weightedMean}}
 #' @param var column of variable of interest
 #' @param weights column of weights matching the variable of interest
+#' @param popTot population size, used in Horvitz-Thompson-like estimation. 
+#' If no value is given for popTot, default value is the sum of weights. In the context
+#' of survey sampling, this is equivalent to using an Hajek estimate.
 #' @return Estimated mean
 #' @seealso \code{\link{weightedMean}}
 #' @export
@@ -53,6 +56,9 @@ weightedTotal <- function(var, weights) {
 #' Computes the weighted estimator for the mean of a column
 #' @param var column of variable of interest
 #' @param weights column of weights matching the variable of interest
+#' @param popTot population size, used in Horvitz-Thompson-like estimation. 
+#' If no value is given for popTot, default value is the sum of weights. In the context
+#' of survey sampling, this is equivalent to using an Hajek estimate.
 #' @return Estimated mean
 #' @seealso \code{\link{HTmean}}
 #' @export

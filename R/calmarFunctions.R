@@ -464,7 +464,9 @@ checkNumberMargins = function(data, marginMatrix) {
   return(TRUE)
 }
 
-
+#' Regroup calibration modalities
+#' @description 
+#' Beware, this function modifies the calibrationMatrix and marginMatrix objects entered in parameter?
 #' Regroups modalities entered in "vecModalities" into single
 #' "newModality" in "calibrationMatrix" and adapts "marginMatrix" to the new concept.
 #' Typical usage is right before a calibration (and after comptutation of marginMatrix), when
@@ -472,6 +474,11 @@ checkNumberMargins = function(data, marginMatrix) {
 #' (typically very rare modalities, on which calibration constraints are very restrictive).
 #' Uses pseudo-"call by reference" via eval.parent because 2 objects are modified :
 #' calibrationMatrix and marginMatrix
+#' @param calibrationMatrix calibration matrix
+#' @param marginMatrix matrix containing the margins to the Icarus format
+#' @param calibrationVariable name of the calibration varaible for which regroupment has to be done
+#' @param vecModalities Initial modalities of the variable
+#' @param newModality Regrouped modalities of the variable
 #' @export
 regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibrationVariable, vecModalities, newModality) {
 
