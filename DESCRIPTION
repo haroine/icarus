@@ -12,4 +12,5 @@ Suggests:
     testthat,
     ggplot2,
     Rglpk,
-    slam
+    slam,
+    xtable

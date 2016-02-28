@@ -1,14 +1,6 @@
-
+# copyright (C) 2014-2016 A.Rebecq
 # This function executes easy calibration with just data and matrix of margins
-# TODO : add calib options
-# - scale : if TRUE, weights ratio are centered on 1 (just like "ECHELLE=0" in Calmar2)
-# - description : print summary of before / after weight ratios and comparison
-# of estimators before / after calibration (TRUE by default)
-# To only calibrate on popTotal, set marginMatrix=NULL.
-# TODO : remove useless parameter "description"
-# Careful, contrary to old rule, returns calibrated weights and not
-# ratio between initial and calibrated weights
-# Careful with lambda, triggers restrictedSearch, meaning searchLambda could never converge
+
 #########
 #' Calibration on margins
 #' @description
@@ -125,7 +117,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     } else {
       if( (bounds == "min") || (method == "min")) {
         g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
-                            , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex, forceBisection=forceBisection)
+                            , q=rep(1,nrow(matrixCal)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex, forceBisection=forceBisection)
       }
     }
     
@@ -184,6 +176,11 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
   ## Export in TeX
   if(!is.null(exportDistributionTable)) {
     
+    if (!requireNamespace("xtable", quietly = TRUE)) {
+      stop("Package xtable needed for exportDistributionTable to work. Please install it.",
+           call. = FALSE)
+    }
+    
     # Linear or raking ratio
     if(is.null(bounds)) {
       
@@ -201,14 +198,14 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
       names(statsRatio) <- newNames
     }
     
-    latexQuantiles <- xtable(as.data.frame(t(statsRatio)))
+    latexQuantiles <- xtable::xtable(as.data.frame(t(statsRatio)))
     
     # Notice that there is one extra column in align(latexQuantiles)
     # since we haven't specified yet to exclide rownames
     if(is.null(bounds)) {
-      align(latexQuantiles) <- "|c|ccccccccc||c|"
+      xtable::align(latexQuantiles) <- "|c|ccccccccc||c|"
     } else {
-      align(latexQuantiles) <- "|c|c|ccccccccc|c||c|"
+      xtable::align(latexQuantiles) <- "|c|c|ccccccccc|c||c|"
     }
     
     
@@ -225,13 +222,14 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
   
   # Plot density of weights ratio
   if(description) {
+    
     if(requireNamespace("ggplot2")) {
       
-      densityPlot = ggplot(data.frame(weightsRatio), aes(x=weightsRatio)) + geom_density(alpha=0.5, fill="#FF6666", size=1.25, adjust=2) + theme_bw()
+      densityPlot = ggplot2::ggplot(data.frame(weightsRatio), ggplot2::aes(x=weightsRatio)) + ggplot2::geom_density(alpha=0.5, fill="#FF6666", size=1.25, adjust=2) + ggplot2::theme_bw()
       print(densityPlot)
       
       if(!is.null(exportDistributionImage)) {
-        ggsave(densityPlot, file=exportDistributionImage)
+        ggplot2::ggsave(densityPlot, file=exportDistributionImage)
       }
       
     } else {

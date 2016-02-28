@@ -6,19 +6,18 @@ penalizedCalib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
                   alpha = NULL, costs, uCostPenalized=1e2,
                   maxIter=500, calibTolerance=1e-06, lambda=NULL, gap=NULL) {
 
-## No other method than linear is valid for penalized calibration
-# distance <- distanceKhiTwo
-
-setLambdaPerso <- FALSE
-if(!is.null(lambda)) {
-  setLambdaPerso <- TRUE
-}
-
-# TODO : additional checks ??
-
-return(penalCalibAlgorithm(Xs, d, total, q, method,
-                      updateParameters, params, costs, uCostPenalized=uCostPenalized
-                      , maxIter, calibTolerance, lambda=lambda, setLambdaPerso=setLambdaPerso, gap=gap))
+  ## No distance implemented in penalizedCalib requires updateParameters or params
+  updateParameters <- NULL
+  params <- NULL
+  
+  setLambdaPerso <- FALSE
+  if(!is.null(lambda)) {
+    setLambdaPerso <- TRUE
+  }
+  
+  return(penalCalibAlgorithm(Xs, d, total, q, method,
+                        updateParameters, params, costs, uCostPenalized=uCostPenalized
+                        , maxIter, calibTolerance, lambda=lambda, setLambdaPerso=setLambdaPerso, gap=gap))
 
 }
 

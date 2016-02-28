@@ -120,7 +120,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
       LtestMax <- Ulinear
     }
 
-
+    method <- "logit" ## Default bounded method 
     return(bisectMinBounds(c(LtestMin,LtestMax),c(Ltest1,Utest1),gTestMin,
                                        Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description))
 
