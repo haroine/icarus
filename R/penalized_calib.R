@@ -217,7 +217,11 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
   print(minG)
   print(maxG)
 
-  if( (count > 0 && abs(lambdaBackup - lambdaTest) <= 1e-7) || (abs(maxG - minG - gap) <= 1e-4) ) {
+  ## Due to the huge numeric range of penalized calibration problems,
+  ## we may have to tweak the parameter lambdaTolerance a little before
+  ## finding the "right value"
+  lambdaTolerance <- 1e-20
+  if( (count > 0 && abs(lambdaBackup - lambdaTest) <= lambdaTolerance) || (abs(maxG - minG - gap) <= 1e-4) ) {
     writeLines(paste("Found lambda = ",lambdaTest, " ; count = ",count, sep=""))
     return(w)
   }
