@@ -19,6 +19,9 @@ marginStats(data, marginMatrix, pct = FALSE, popTotal = NULL, colWeights,
 \item{colWeights}{name of weights column in the dataframe}
 
 \item{colCalibratedWeights}{name of calibrated weights column in the dataframe (if applicable)}
+
+\item{calibThreshold}{If difference between calibration estimate and margin differ more than
+this parameter, calibration is considered to have failed}
 }
 \value{
 Dataframe containing stats on weights and margins

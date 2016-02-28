@@ -10,6 +10,10 @@ weightedMean(var, weights, popTot = NULL)
 \item{var}{column of variable of interest}
 
 \item{weights}{column of weights matching the variable of interest}
+
+\item{popTot}{population size, used in Horvitz-Thompson-like estimation.
+If no value is given for popTot, default value is the sum of weights. In the context
+of survey sampling, this is equivalent to using an Hajek estimate.}
 }
 \value{
 Estimated mean

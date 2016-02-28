@@ -225,7 +225,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
   
   # Plot density of weights ratio
   if(description) {
-    if(require("ggplot2")) {
+    if(requireNamespace("ggplot2")) {
       
       densityPlot = ggplot(data.frame(weightsRatio), aes(x=weightsRatio)) + geom_density(alpha=0.5, fill="#FF6666", size=1.25, adjust=2) + theme_bw()
       print(densityPlot)

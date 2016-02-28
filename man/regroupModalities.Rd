@@ -24,6 +24,6 @@ be regrouped is indicated by the rows of a matrix. Output vector is NOT a factor
 }
 \examples{
 regroupModalities(c(1:20), rbind(c(0,5),c(6,18),c(19,Inf)))
-> [1] 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
+# Returns : [1] 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
 }
 

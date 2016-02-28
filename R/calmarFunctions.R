@@ -168,14 +168,15 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
 #' (same as first panels output in Calmar/Calmar 2)
 #' Output is a list, which might not be convenient for exports (e.g. for integration
 #' into a scientific report). In such cases,
-#' use function marginStats, which outputs a dataframe.
+#' use function \code{\link{marginStats}}, which outputs a dataframe.
 #' @param data dataframe containing the survey data
 #' @param marginMatrix matrix of margins
 #' @param popTotal total of population, useful if margins are entered in relative value
 #' @param pct Set this to true if margins for categorical variables are written in percentages
 #' @param colWeights name of weights column in the dataframe
 #' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
-#'
+#' @param calibThreshold If difference between calibration estimate and margin differ more than
+#' this parameter, calibration is considered to have failed
 #' @return List containing stats on weights and margins
 #' @seealso \code{\link{marginStats}}
 #' @keywords statistics, stats, description, results
@@ -344,7 +345,8 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
 #' @param popTotal total of population, useful if margins are entered in relative value
 #' @param colWeights name of weights column in the dataframe
 #' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
-#'
+#' @param calibThreshold If difference between calibration estimate and margin differ more than
+#' this parameter, calibration is considered to have failed
 #' @return Dataframe containing stats on weights and margins
 #' @seealso \code{\link{calibrationMarginStats}}
 #' @keywords statistics, stats, description, results

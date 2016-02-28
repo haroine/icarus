@@ -19,6 +19,9 @@ calibrationMarginStats(data, marginMatrix, popTotal = NULL, pct = FALSE,
 \item{colWeights}{name of weights column in the dataframe}
 
 \item{colCalibratedWeights}{name of calibrated weights column in the dataframe (if applicable)}
+
+\item{calibThreshold}{If difference between calibration estimate and margin differ more than
+this parameter, calibration is considered to have failed}
 }
 \value{
 List containing stats on weights and margins
@@ -30,7 +33,7 @@ variables are displayed in percentages.
 (same as first panels output in Calmar/Calmar 2)
 Output is a list, which might not be convenient for exports (e.g. for integration
 into a scientific report). In such cases,
-use function marginStats, which outputs a dataframe.
+use function \code{\link{marginStats}}, which outputs a dataframe.
 }
 \seealso{
 \code{\link{marginStats}}
