@@ -1,7 +1,7 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 library(testthat)
 
-context("Test calibration functions")
+context("Test calibration functions on small dataset")
 
 test_that("Calibration functions check out with Calmar", {
 
@@ -39,11 +39,15 @@ test_that("Calibration functions check out with Calmar", {
 #   mar3_2 <- c("service",2,0.45,0.55,0)
 #   mar4_2 <- c("salaire", 0, 470000,0,0)
 #   margins_2 <- rbind(mar1_2, mar2_2, mar3_2, mar4_2)
-#
+# 
 #   wCalesLin_2 <- calibration(data=data_ex2, marginMatrix=margins_2, colWeights="poids"
-#                            , method="linear", description=TRUE, popTotal=250)
-#
+#                            , method="linear", description=TRUE, popTotal=250, pct=TRUE)
 
+  ## Test estimators value
+  expect_equal(HTmean(data_ex2$cinema, wCalesLin), 2.93, tolerance=1e-2)
+  expect_equal(HTmean(data_ex2$cinema, wCalesRaking), 3.22, tolerance=1e-2)
+  expect_equal(HTmean(data_ex2$cinema, wCalesLogit1), 3.14, tolerance=1e-2)
+  
 })
 
 test_that("Penalized calibration checks out", {
@@ -61,8 +65,7 @@ test_that("Penalized calibration checks out", {
   wCalesLin <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
                            , description=FALSE, costs=costsInfty)
 
-  # print(wCalesLin - calWeights_ex2$wLinear)
-  # expect_equal(wCalesLin, calWeights_ex2$wLinear, tolerance=1e-4)
+  expect_equal(wCalesLin, calWeights_ex2$wLinear, tolerance=1e-4)
 
   ## Test bad specification of infinite costs
   costsInfty2 <- c(-3, Inf, -1, -5000)

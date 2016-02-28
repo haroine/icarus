@@ -2,10 +2,11 @@
 ### Functions solving calibration with minimum bounds (for bounded distances).
 ### Are all private, used by the main "calibration" function
 
+## Search for tight bounds by simplex algorithm
 solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE) {
 
-  if (!requireNamespace("Rglpk", quietly = TRUE)) {
+  if (!requireNamespace("Rglpk", quietly = TRUE) || !requireNamespace("slam", quietly = TRUE)) {
       stop("Package Rglpk needed for this function to work. Please install it.",
             call. = FALSE)
   }
@@ -53,14 +54,16 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
 
 }
 
+## General function for calibration on tight/min bounds
 minBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE,
-                           precisionBounds=1e-4, forceSimplex=FALSE) {
+                           precisionBounds=1e-4, forceSimplex=FALSE, forceBisection=FALSE) {
 
   usedSimplex <- FALSE
   
-  ## TODO better selection of use of simplex
-  if(forceSimplex || (nrow(Xs)*ncol(Xs)) <= 10000) {
+  ## For matrices containing more than 1e8 elements, do not use simplex
+  ## (it might cause memory issues)
+  if( ( forceSimplex || (nrow(Xs)*ncol(Xs)) <= 1e8 ) && !forceBisection) {
 
     gSol <- solveMinBoundsCalib(Xs, d, total, q,
                                 maxIter, calibTolerance, description)
@@ -75,7 +78,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
     ## on the simplex algorithm, so we stop after a long time anyway, and switch
     ## to bisection
     maxIter <- 5000
-
+    
   } else {
 
     Lmax <- 1.0
@@ -102,7 +105,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
   ## If no convergence, bisection to find the true min Bounds
   if(is.null(gFinal)) {
 
-    gTestMin <- calib(Xs=Xs, d=d, total=total, method="raking", maxIter=maxIter, calibTolerance=calibTolerance)
+    gTestMin <- calib(Xs=Xs, d=d, total=total, method="linear", maxIter=maxIter, calibTolerance=calibTolerance)
     Llinear <- min(gTestMin)
     Ulinear <- max(gTestMin)
 
@@ -117,7 +120,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
       LtestMax <- Ulinear
     }
 
-
+    method <- "logit" ## Default bounded method 
     return(bisectMinBounds(c(LtestMin,LtestMax),c(Ltest1,Utest1),gTestMin,
                                        Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description))
 
@@ -130,6 +133,7 @@ minBoundsCalib <- function(Xs, d, total, q=NULL,
 
 }
 
+## Search for tight bounds by bisection (sub-optimal algorithm)
 bisectMinBounds <- function(convergentBounds,minBounds,gFinalSauv,
                             Xs,d,total, method,maxIter, calibTolerance, precisionBounds,
                             description=TRUE) {
@@ -150,7 +154,8 @@ bisectMinBounds <- function(convergentBounds,minBounds,gFinalSauv,
                             Xs,d,total, method,maxIter, calibTolerance, precisionBounds, description) )
   } else {
 
-    if( all(abs(gFinal - gFinalSauv) <= rep(precisionBounds, length(gFinal))) ) {
+    # if( all(abs(gFinal - gFinalSauv) <= rep(precisionBounds, length(gFinal))) ) {
+    if( all(abs(c( (max(gFinal) - max(gFinalSauv)) , (min(gFinal) - min(gFinalSauv)))) <= c(precisionBounds,precisionBounds)) ) {
       return(gFinal)
     } else {
       return( bisectMinBounds(c(Ltest,Utest),minBounds,gFinal,

@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 # Functions designed so that calibration can be made in a familiar
 # setting for Calmar and Calmar2 users
 
@@ -87,7 +87,7 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
   return(matrixCal)
 }
 
-formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
+formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FALSE)
 {
   # Create empty vector of margins
   cMatrixCopy = calmarMatrix
@@ -111,20 +111,38 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
     }
     else
     {
-      if(!is.null(popTotal)) {
-        popTotalNum <- popTotal
-      } else {
-        popTotalNum <- 1
-      }
+      ## TODO : change by using parameter pct
+      ## ... this means that pct is considered TRUE by default
+#       if(!is.null(popTotal)) {
+#         popTotalNum <- popTotal
+#       } else {
+#         popTotalNum <- 1
+#       }
 
       n = calmarMatrix[curRow,1]
 
+      ## TODO : change to pct
       ## If categorial margins are not entered as percentages,
       ## do not multiply by popTotal (except if it is popVector !)
-      if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
+      
+      if( all(calmarMatrix[curRow,2:(n+1)] < 1) && (is.null(popTotal) || !pct) ) {
+        warning(paste("All margins in variable ",curRow,"are less than 1 : should they be considered as percentages ?"))
+      }
+      
+#       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
+#         popTotalNum <- 1
+#       }
+      
+      if(pct) {
+        if(is.null(popTotal)) {
+          stop("popTotal has to be set when pct is TRUE")
+        } else {
+          popTotalNum <- popTotal
+        }
+      } else {
         popTotalNum <- 1
       }
-
+      
       for(j in 2:(n+1))
       {
         cMargins[i] = calmarMatrix[curRow,j]*popTotalNum
@@ -142,260 +160,28 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL)
   return(cMargins)
 }
 
-
-# This function executes easy calibration with just data and matrix of margins
-# TODO : add calib options
-# - scale : if TRUE, weights ratio are centered on 1 (just like "ECHELLE=0" in Calmar2)
-# - description : print summary of before / after weight ratios and comparison
-# of estimators before / after calibration (TRUE by default)
-# To only calibrate on popTotal, set marginMatrix=NULL.
-# TODO : remove useless parameter "description"
-# Careful, contrary to old rule, returns calibrated weights and not
-# ratio between initial and calibrated weights
-# Careful with lambda, triggers restrictedSearch, meaning searchLambda could never converge
-#########
-#' Calibration on margins
+#' Stats for initial weights, calibrated weights, and margins.
 #' @description
-#' Performs calibration on margins with several methods and customizable parameters
-#' @param data The dataframe containing the survey data
-#' @param marginMatrix The matrix giving the margins for each column variable included
-#' in the calibration problem
-#' @param colWeights The name of the column containing the initial weights in the survey
-#' dataframe
-#' @param colCalibratedWeights The name of the column of final calibrated weights
-#' @param method The method used to calibrate. Can be "linear", "raking", "logit", "truncated"
-#' @param maxIter The maximum number of iterations before stopping
-#' @param description If TRUE, output stats about the calibration process as well as the
-#' graph of the density of the ratio calibrated weights / initial weights
-#' @param bounds Two-element vector containing the lower and upper bounds for bounded methods
-#' ("truncated" and "logit")
-#' @param costs The penalized calibration method will be used, using costs defined by this
-#' vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given
-#' a default that can be adjusted through parameter "infinity"
-#' @param popTotal Precise the total population if margins are defined by relative value in
-#' marginMatrix (percentages)
-#' @param scale If TRUE, stats (including bounds) on ratio calibrated weights / initial weights are
-#' done on a vector multiplied by the weighted non-response ratio (ratio population total /
-#' total of initial weights). Has same behavior as "ECHELLE=0" in Calmar.
-#' @param check performs a few check about the dataframe. TRUE by default
-#' @param infinity Only used in the penalized calibration. Use this to tweak the numeric value
-#' of an infinite cost.
-#' @param uCostPenalized Unary cost by which every cost is "costs" column is multiplied
-#' @param lambda The initial ridge lambda used in penalized calibration. By default, the initial
-#' lambda is automatically chosen by the algorithm, but you can speed up the search for the optimum
-#' if you already know a lambda close to the lambda_opt corresponding to the gap you set. Be careful,
-#' the search zone is reduced when a lambda is set by the user, so the program may not converge
-#' if the lambda set is too far from the lambda_opt.
-#' @param gap Only useful for penalized calibration. Sets the maximum gap between max and min
-#' calibrated weights / initial weights ratio (and thus is similar to the "bounds"
-#' parameter used in regular calibration)
-#' @param precisionBounds Only used for calibration on minimum bounds. Desired precision
-#' for lower and upper reweighting factor, both bounds being as close to 1 as possible
-#' @param forceSimplex Only used for calibration on minimum bounds.Bisection algorithm is used
-#' for matrices whose size exceed 10000. forceSimplex = TRUE forces the use of the simplex algorithm
-#' whatever the size of the problem
-#' @param exportDistributionImage File name to which the density plot shown when
-#' description is TRUE is exported. Requires package "ggplot2"
-#' @param exportDistributionTable File name to which the distribution table of before/after
-#' weights shown when description is TRUE is exported.
-#' Requires package "ggplot2". Requires package "xtable"
-#'
-#' @return column containing the final calibrated weights
-#'
-#' @export
-calibration = function(data, marginMatrix, colWeights = "POIDS", colCalibratedWeights="POIDS_CALES", method="linear",
-                       maxIter=2500, description=TRUE, bounds=NULL, costs=NULL, popTotal=NULL, scale=NULL, check=TRUE
-                       , infinity=1e7, uCostPenalized=1e2, lambda=NULL, gap=NULL, precisionBounds=1e-4, forceSimplex=FALSE
-                       , exportDistributionImage=NULL, exportDistributionTable=NULL) {
-
-  # By default, scale is TRUE when popTotal is not NULL, false otherwise
-  if(is.null(popTotal)) {
-    scale <- FALSE
-  } else {
-    scale <- TRUE
-  }
-
-  ## Clean costs for penalized calibration
-#   if(!is.null(costs)) {
-#     costs <- cleanCosts(costs, infinity, uCostPenalized)
-#   }
-
-  if(check) {
-
-    # Check NAs on calibration variables
-    matrixTestNA = missingValuesMargins(data, marginMatrix)
-    testNA = as.numeric(matrixTestNA[,2])
-    if(sum(testNA) > 0) {
-      print(matrixTestNA)
-      stop("NAs found in calibration variables")
-    }
-
-    # TODO : Add check marginMatrix -> check if number of modalities in calibration
-    # variables matches marginMatrix
-    if(!checkNumberMargins(data, marginMatrix)) stop("Error in number of modalities.")
-
-    # TODO : check that sum on all categorial variables is the same
-
-  }
-
-  ## TODO : replace using createFormattedMargins
-  marginCreation <- createFormattedMargins(data, marginMatrix, popTotal)
-  matrixCal = marginCreation[[2]]
-  formattedMargins = marginCreation[[1]]
-
-  # Same rule as in "Calmar" for SAS : if scale is TRUE,
-  # calibration is done on weights adjusted for nonresponse
-  # (uniform adjustment)
-  weights <- as.numeric(data.matrix(data[colWeights]))
-
-  ## For tests
-#   Xs_glob <<- matrixCal
-#   total_glob <<- formattedMargins
-#   d_glob <<- weights
-
-  if(scale) {
-    if(is.null(popTotal)) {
-      stop("When scale is TRUE, popTotal cannot be NULL")
-    }
-    weights <- weights*(popTotal / sum(data.matrix(data[colWeights])) )
-
-  }
-
-  # TODO : add catching of "no convergence" exception
-  if(is.null(costs)) {
-
-    g <- NULL
-
-    if( (is.numeric(bounds)) || (method != "min") ) {
-      g <- calib(Xs=matrixCal, d=weights, total=formattedMargins, method=method, bounds=bounds, maxIter=maxIter)
-    } else {
-      if( (bounds == "min") || (method == "min")) {
-        g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
-                          , q=rep(1,length(d)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex)
-      }
-    }
-
-    data[colCalibratedWeights] = g*weights
-
-  } else {
-
-    # Forbid popTotal null when gap is selected
-    if(!is.null(gap) && is.null(popTotal)) {
-      warning("popTotal NULL when gap is selected is a risky setting !")
-    }
-
-    ## Format costs
-    costsFormatted <- formatCosts(costs, marginMatrix, popTotal)
-
-    wCal = penalizedCalib(Xs=matrixCal, d=weights, total=formattedMargins, method=method
-                          , bounds=bounds, costs=costsFormatted, infinity=infinity, uCostPenalized=uCostPenalized
-                          , maxIter=maxIter, lambda=lambda, gap=gap)
-    data[colCalibratedWeights] = data.matrix(wCal)
-    g = wCal / weights
-  }
-
-  if(description) {
-    writeLines("")
-    writeLines("################### Summary of before/after weight ratios ###################")
-  }
-  # popTotalComp is popTotal computed from sum of calibrated weights
-  popTotalComp <- sum(data[colCalibratedWeights])
-
-  weightsRatio = g
-
-  if(description) {
-
-    writeLines(paste("Calibration method : ",method, sep=""))
-
-    if(! (method %in% c("linear","raking")) && ! is.null(bounds) ) {
-
-      if(is.numeric(bounds)) {
-        writeLines(paste("\t L bound : ",bounds[1], sep=""))
-        writeLines(paste("\t U bound : ",bounds[2], sep=""))
-      }
-
-      if( (bounds == "min") | (method == "min") ) {
-        writeLines(paste("\t L bound : ",round(min(g),4), sep=""))
-        writeLines(paste("\t U bound : ",round(max(g),4), sep=""))
-      }
-
-    }
-
-    writeLines(paste("Mean : ",round(mean(weightsRatio),4), sep=""))
-    quantileRatio <- round(quantile(weightsRatio, probs=c(0,0.01,0.1,0.25,0.5,0.75,0.9,0.99,1)),4)
-    print(quantileRatio)
-
-  }
-
-  ## Export in TeX
-  if(!is.null(exportDistributionTable)) {
-
-    # Linear or raking ratio
-    if(is.null(bounds)) {
-
-      newNames <- names(quantileRatio)
-      newNames <- c(newNames,"Mean")
-
-      statsRatio <- c(quantileRatio,mean(quantileRatio))
-      names(statsRatio) <- newNames
-
-    } else {
-      newNames <- names(quantileRatio)
-      newNames <- c("L",newNames,"U","Mean")
-
-      statsRatio <- c(bounds[1],quantileRatio,bounds[2],mean(quantileRatio))
-      names(statsRatio) <- newNames
-    }
-
-    latexQuantiles <- xtable(as.data.frame(t(statsRatio)))
-
-    # Notice that there is one extra column in align(latexQuantiles)
-    # since we haven't specified yet to exclide rownames
-    if(is.null(bounds)) {
-      align(latexQuantiles) <- "|c|ccccccccc||c|"
-    } else {
-      align(latexQuantiles) <- "|c|c|ccccccccc|c||c|"
-    }
-
-
-    print(latexQuantiles,  include.rownames = FALSE, include.colnames = TRUE,
-          , floating = FALSE, file=exportDistributionTable)
-  }
-
-
-  if(description) {
-    writeLines("")
-    writeLines("################### Comparison Margins Before/After calibration ###################")
-    print(calibrationMarginStats(data=data, marginMatrix=marginMatrix, popTotal=popTotal, colWeights=colWeights, colCalibratedWeights=colCalibratedWeights))
-  }
-
-  # Plot density of weights ratio
-  if(description) {
-    if(require("ggplot2")) {
-
-      densityPlot = ggplot(data.frame(weightsRatio), aes(x=weightsRatio)) + geom_density(alpha=0.5, fill="#FF6666", size=1.25, adjust=2) + theme_bw()
-      print(densityPlot)
-
-      if(!is.null(exportDistributionImage)) {
-        ggsave(densityPlot, file=exportDistributionImage)
-      }
-
-    } else {
-      warning("Require package ggplot2 to plot weights ratio")
-    }
-  }
-
-  return(g*weights)
-}
-
-#' Gives stats about the calibration process: totals after/before calibration vs. margins
-#' Same as first panels output in Calmar/Calmar 2
+#' Gives stats about the calibration process: differences between 
+#' totals after/before calibration and margins. Totals for categorical
+#' variables are displayed in percentages.
+#' (same as first panels output in Calmar/Calmar 2)
+#' Output is a list, which might not be convenient for exports (e.g. for integration
+#' into a scientific report). In such cases,
+#' use function \code{\link{marginStats}}, which outputs a dataframe.
 #' @param data dataframe containing the survey data
 #' @param marginMatrix matrix of margins
 #' @param popTotal total of population, useful if margins are entered in relative value
+#' @param pct Set this to true if margins for categorical variables are written in percentages
 #' @param colWeights name of weights column in the dataframe
+#' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
+#' @param calibThreshold If difference between calibration estimate and margin differ more than
+#' this parameter, calibration is considered to have failed
+#' @return List containing stats on weights and margins
+#' @seealso \code{\link{marginStats}}
+#' @keywords statistics, stats, description, results
 #' @export
-calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights="POIDS", colCalibratedWeights=NULL, calibThreshold=1.0) {
+calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
 
   displayCalibratedWeights <- TRUE
 
@@ -413,9 +199,17 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
   enteredAsPct <- FALSE
   popTotalMarginDisplay <- popTotal
   if(is.null(popTotal)) {
-    enteredAsPct <- TRUE
-    popTotal <- sum(data[colCalibratedWeights])
+    enteredAsPct <- FALSE
+    if(displayCalibratedWeights) {
+      popTotal <- sum(data[colCalibratedWeights])
+    } else {
+      popTotal <- sum(data[colWeights])
+    }
     popTotalMarginDisplay <- NA
+  }
+  
+  if(pct) {
+    enteredAsPct <- TRUE
   }
 
   toWarn = FALSE
@@ -482,11 +276,13 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
         sumCalibrated = sum(data.matrix(data[data[marginNames[i]] == modalities[j],][colCalibratedWeights]))
 
         if(!enteredAsPct) {
+          ## By convention, margin for categorical variables are given in percentages
           margin = as.numeric(marginMatrix[i,2+j])
-          tempStatVec = c(sumWeights, sumCalibrated, margin)
+          # tempStatVec = c(sumWeights, sumCalibrated, margin)
+          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
         } else {
           margin = as.numeric(marginMatrix[i,2+j])
-          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin/popTotal*100)
+          tempStatVec = c(sumWeights/totalWeights*100, sumCalibrated/totalCalibrated*100, margin*100)
         }
 
         #tempStatVec = c(sumWeights, sumCalibrated, margin) # TODO : change here level / structure
@@ -534,63 +330,87 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, colWeights=
   return(marginStatsList)
 }
 
-
-marginStats <- function(data, marginMatrix, popTotal=NULL, colWeights="POIDS"
+#' Stats for initial weights, calibrated weights, and margins.
+#' @description
+#' Just like \code{\link{calibrationMarginStats}}, gives stats about the calibration process: 
+#' differences between totals after/before calibration and margins. Totals for categorical
+#' variables are displayed in percentages. The last column, named "difference", shows
+#' the difference (in percentage points) between initial estimates and margins (if colCalibratedWeights is NULL) 
+#' or between calibrated estimates and margins (if colCalibratedWeights is not NULL).
+#' Output is a dataframe, which might be more convenient to export than a list
+#' (e.g. for integration into reports).
+#' @param data dataframe containing the survey data
+#' @param marginMatrix matrix of margins
+#' @param pct Set this to true if margins for categorical variables are written in percentages
+#' @param popTotal total of population, useful if margins are entered in relative value
+#' @param colWeights name of weights column in the dataframe
+#' @param colCalibratedWeights name of calibrated weights column in the dataframe (if applicable)
+#' @param calibThreshold If difference between calibration estimate and margin differ more than
+#' this parameter, calibration is considered to have failed
+#' @return Dataframe containing stats on weights and margins
+#' @seealso \code{\link{calibrationMarginStats}}
+#' @keywords statistics, stats, description, results
+#' @export
+marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
                         , colCalibratedWeights=NULL, calibThreshold=1.0) {
 
-  listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, colWeights
+  listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, pct, colWeights
                                             , colCalibratedWeights, calibThreshold)
   marginStatsDF <- do.call(rbind.data.frame, listMarginStats)
 
-  ## Column difference is re-computed from scratcg
+  ## Compute column difference
   marginStatsDF <- marginStatsDF[,-c(4)]
   if( is.null(colCalibratedWeights) ) {
 
     marginStatsDF <- marginStatsDF[,-c(2)] # Do not display calibrated weigths column
-    colnames(marginStatsDF) <- c("Before calibration","Margin")
-    marginStatsDF$difference <- round(abs(data.matrix(marginStatsDF["Margin"]) - data.matrix(marginStatsDF["Before calibration"]))/data.matrix(marginStatsDF["Margin"])*100,2)
-
+    
+    marginStatsDF[,3] <- round(abs(marginStatsDF[,2] - marginStatsDF[,1])/marginStatsDF[,2]*100,2)
+    
+    ## Correct coefficients for categorical variables
+    marginStatsDF <- correctCoefsCategorical(marginStatsDF, marginMatrix)
+    
+    names(marginStatsDF) <- c("Before calibration","Margin", "Difference (pct)")
+    
+    
   } else {
-
-    colnames(marginStatsDF) <- c("Before calibration","After calibration","Margin")
-    marginStatsDF$difference <- round(abs(data.matrix(marginStatsDF["Margin"]) - data.matrix(marginStatsDF["After calibration"]))/data.matrix(marginStatsDF["Margin"])*100,2)
-
-
+    
+    marginStatsDF[,4] <- round(abs(marginStatsDF[,3] - marginStatsDF[,2])/marginStatsDF[,3]*100,2)
+    
+    ## Correct coefficients for categorical variables
+    marginStatsDF <- correctCoefsCategorical(marginStatsDF, marginMatrix, ncol1=2, ncol2=3, ncol3=4)
+    
+    colnames(marginStatsDF) <- c("Before calibration","After calibration","Margin","Difference (pct)")
   }
-
-
 
   return(marginStatsDF)
 
 }
 
-
-# Does the hot-deck imputation of NAs in calibration variables
-# Hot-deck neighbors are selected via margins (of marginMatrix)
-## TODO : deprecate and remove
-imputCalibrationVars = function(data, marginMatrix) {
-
-  dataUpdated = data
-  N = nrow(marginMatrix)
-
-  for(i in 1:N) {
-
-    marginName = marginMatrix[i,1]
-    writeLines(paste("Imputation of column : ",marginName))
-
-    if(nrow(data.matrix(data[is.na(data[marginName]),])) > 0) {
-      vecParams = marginMatrix[,1]
-      vecParams = vecParams[-i]
-
-      dataUpdated[is.na(dataUpdated[marginName]),][marginName] = imputViaNeighbors(data, colToImput=marginName, vecParams, method="first")
+## Private function, used in marginMatrix to account for
+## categorical variables, whose stats are displayed in percentages
+correctCoefsCategorical <- function(marginStatsDF_init, marginMatrix, ncol1=1, ncol2=2, ncol3=3) {
+  
+  marginStatsDF <- marginStatsDF_init
+  
+  nModalCateg <- 0
+  for(i in 1:nrow(marginMatrix)) {
+    nModal <- as.numeric(marginMatrix[i,2]) 
+    if(nModal > 0) {
+      
+      for(j in 1:(nModal)) {
+        ## Offset of 1 because of popTotal in first line of marginStatsDF
+        marginStatsDF[i+nModalCateg+1,ncol3] <- round(abs(marginStatsDF[i+nModalCateg+1,ncol2] - marginStatsDF[i+nModalCateg+1,ncol1]),2)
+        if(j < nModal) nModalCateg <- nModalCateg + 1
+      }
     }
-
   }
-
-  return(dataUpdated)
+  
+  return(marginStatsDF)
+  
 }
 
-
+## TODO : deprecate, never used
+## Replaced by checkNumberMargins
 # Check validity of marginMatrix
 checkMarginMatrix = function(marginMatrix) {
 
@@ -646,7 +466,9 @@ checkNumberMargins = function(data, marginMatrix) {
   return(TRUE)
 }
 
-
+#' Regroup calibration modalities
+#' @description 
+#' Beware, this function modifies the calibrationMatrix and marginMatrix objects entered in parameter?
 #' Regroups modalities entered in "vecModalities" into single
 #' "newModality" in "calibrationMatrix" and adapts "marginMatrix" to the new concept.
 #' Typical usage is right before a calibration (and after comptutation of marginMatrix), when
@@ -654,6 +476,11 @@ checkNumberMargins = function(data, marginMatrix) {
 #' (typically very rare modalities, on which calibration constraints are very restrictive).
 #' Uses pseudo-"call by reference" via eval.parent because 2 objects are modified :
 #' calibrationMatrix and marginMatrix
+#' @param calibrationMatrix calibration matrix
+#' @param marginMatrix matrix containing the margins to the Icarus format
+#' @param calibrationVariable name of the calibration varaible for which regroupment has to be done
+#' @param vecModalities Initial modalities of the variable
+#' @param newModality Regrouped modalities of the variable
 #' @export
 regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibrationVariable, vecModalities, newModality) {
 
@@ -825,7 +652,7 @@ modifyMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thr
 }
 
 ## Private function that creates margins to the right format
-createFormattedMargins <- function(data, marginMatrix, popTotal=NULL) {
+createFormattedMargins <- function(data, marginMatrix, popTotal=NULL, pct=FALSE) {
 
   if(is.null(marginMatrix)) {
 
@@ -855,7 +682,7 @@ createFormattedMargins <- function(data, marginMatrix, popTotal=NULL) {
 
     matrixCal = createCalibrationMatrix(marginMatrix,data, popVector)
 
-    formattedMargins = formatMargins(calmarMatrix, matrixCal, popTotal)
+    formattedMargins = formatMargins(calmarMatrix, matrixCal, popTotal, pct)
 
   }
 

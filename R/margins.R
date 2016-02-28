@@ -1,9 +1,14 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 
 # TODO : add xtable parameters to marginsToTeX parameters
 marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
                          scaleboxTeX=NULL, file=NULL,
                          label=NULL, caption=NULL) {
+  
+  if (!requireNamespace("xtable", quietly = TRUE)) {
+    stop("Package xtable needed for export of margins in LateX to work. Please install it.",
+         call. = FALSE)
+  }
   
   if(!is.matrix(marginMatrix)) {
     stop("marginsToTeX input type has to be matrix.")
@@ -45,8 +50,8 @@ marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
     captionTeX <- paste(caption, " -- total population : ", round(popTotal,0),sep="")
   }
   
-  print(xtable(marginDF, caption=captionTeX, label=label), include.rownames = FALSE, include.colnames = FALSE, 
-               , floating = TRUE, scalebox=scaleboxTeX, file=file
+  print(xtable::xtable(marginDF, caption=captionTeX, label=label), include.rownames = FALSE, include.colnames = FALSE,
+               floating = TRUE, scalebox=scaleboxTeX, file=file
         )
 
 }

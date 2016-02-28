@@ -89,7 +89,7 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
 #' @return Column vector with regrouped modalities
 #' @examples
 #' regroupModalities(c(1:20), rbind(c(0,5),c(6,18),c(19,Inf)))
-#' > [1] 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
+#' # Returns : [1] 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 2 2 2 3 3
 #' @export
 regroupModalities = function(column, regroupMatrix, modalities=NULL) {
 

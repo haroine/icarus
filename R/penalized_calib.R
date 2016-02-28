@@ -1,52 +1,63 @@
-# copyright (C) 2015 A.Rebecq
+# copyright (C) 2014-2016 A.Rebecq
 ### Partial calibration functions. Are all private, used by the main
 ### "calibration" function
 
 penalizedCalib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
-                  alpha = NULL, costs, infinity=1e7, uCostPenalized=1e2,
+                  alpha = NULL, costs, uCostPenalized=1e2,
                   maxIter=500, calibTolerance=1e-06, lambda=NULL, gap=NULL) {
 
-## No other method than linear is valid for penalized calibration
-distance <- distanceKhiTwo
-
-setLambdaPerso <- FALSE
-if(!is.null(lambda)) {
-  setLambdaPerso <- TRUE
-}
-
-# TODO : additional checks ??
-
-return(penalCalibAlgorithm(Xs, d, total, q, distance,
-                      updateParameters, params, costs, infinity=infinity, uCostPenalized=uCostPenalized
-                      , maxIter, calibTolerance, lambda=lambda, setLambdaPerso=setLambdaPerso, gap=gap))
+  ## No distance implemented in penalizedCalib requires updateParameters or params
+  updateParameters <- NULL
+  params <- NULL
+  
+  setLambdaPerso <- FALSE
+  if(!is.null(lambda)) {
+    setLambdaPerso <- TRUE
+  }
+  
+  return(penalCalibAlgorithm(Xs, d, total, q, method,
+                        updateParameters, params, costs, uCostPenalized=uCostPenalized
+                        , maxIter, calibTolerance, lambda=lambda, setLambdaPerso=setLambdaPerso, gap=gap))
 
 }
 
 penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
-                                distance, updateParameters, params, costs, infinity=1e7, uCostPenalized=1e2
+                                method, updateParameters, params, costs, uCostPenalized=1e2
                                 , maxIter=500, calibTolerance=1e-06
                                 , lambda=NULL, setLambdaPerso=FALSE, gap=NULL) {
 
+  ## TODO : change if method is not linear
+  distance <- distanceKhiTwo
+  
   if(is.null(q)) {
     q <- rep(1,length(d))
   }
 
   ## In this case, penalized calibration has to check with regular calibration
-  if( all(cleanCosts(costs, infinity, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), infinity, uCostPenalized)) ) {
+  checkInfiniteCosts <- cleanCosts(costs, uCostPenalized) == cleanCosts(rep(Inf, length(costs)), uCostPenalized)
+  if( all(checkInfiniteCosts) ) {
     matchClassicCalibration <- TRUE
   } else {
     matchClassicCalibration <- FALSE
   }
 
   if(!is.null(costs)) {
-      costs <- cleanCosts(costs, infinity, uCostPenalized)
+      costs <- cleanCosts(costs, uCostPenalized)
     } else {
       stop("Can't process NULL costs !")
   }
 
+  wRegularCalibration <- NULL
   wRegularCalibration <- calib(Xs, d, total, q, "linear")*d
-#   print(calib(Xs, d, total, q, "linear"))
+  
+  if(!is.null(wRegularCalibration) && matchClassicCalibration) {
+    warning("All costs are infinite: return regular calibration with linear distance")
+    return(wRegularCalibration)
+  }
+  
   ## TODO : handle case when no convergence for linear calib (fail)
+  ## (cannot process the following steps)
+  
   costs_test <- costs
   costs_test[is.infinite(costs_test)] <- 1e9
   lambdaTest <- distance(wRegularCalibration,d, params) / distanceKhiTwo(costs_test*(d %*% Xs), costs_test*total)
@@ -65,7 +76,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
 #       lambda <- lambdaTest*1e15
       lambda <- 1
     } else {
-      lambda <- lambdaTest
+      lambda <- lambdaTest*1e15
     }
 
   }
@@ -87,7 +98,7 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
     }
 
     return( searchLambda(Xs, d, total, q,
-                                     distance, updateParameters, params, costs,
+                                     method, updateParameters, params, costs,
                                      maxIter, calibTolerance
                                       , lastLambdas=NULL, lambdaBackup=1
                                       , lambdaTest=lambda, setLambdaPerso=setLambdaPerso
@@ -100,25 +111,36 @@ penalCalibAlgorithm <- function(Xs, d, total, q=NULL,
     paramInit <- d
   }
 
-  ## Formerly, the optimization was done numerically,
-  ## but since, only the linear method is kept for penalized calibration,
-  ## it can be resolved analytically
 
-  ## Choose method : CG for large problems, BFGS otherwise
-#   methodOptimization <- "BFGS"
-#
-#   if(length(paramInit) >= 500) {
-#     methodOptimization <- "CG"
-#   }
-#   linearOpt <- optim(par = paramInit, toOptimize, Xs=Xs, d=d, total=total
-#                      , lambda=lambda, costs=costs, distance=distance
-#                      , method=methodOptimization, params=params)
-#   w_solution = linearOpt$par
-
-  A <- t(Xs * d * q) %*% Xs
-  C_m_inv <- diag(1/costs)
-  w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
-
+  if(identical(method,"linear")) {
+    ## Solve with linear method (analytical solution)
+    A <- t(Xs * d * q) %*% Xs
+    C_m_inv <- diag(1/costs)
+    w_solution <- d + d*q* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
+  } else {
+    
+    ## Solve for raking method (entropy distance) by ICRS algorithm
+    wTemp <- paramInit
+    A <- t(Xs * d * q) %*% Xs
+    C_m_inv <- diag(1/costs)
+    cont <- TRUE
+    while(cont) {
+      wTempBackup <- wTemp
+      qTemp <- as.vector(2*(wTemp - d) / (d * distanceRaking(wTemp,d)[[2]]))
+      
+      qTemp[is.na(qTemp)] <- 0
+      qTemp[is.infinite(qTemp)] <- 0
+      
+      A <- t(Xs * d * q*qTemp) %*% Xs
+      wTemp <- d + d*q*qTemp* (Xs %*% ( ginv(A + lambda*C_m_inv) %*% t(unname(total - d%*%Xs)) ))
+      
+      if( all(abs(wTemp - wTempBackup)) <= calibTolerance ) {
+        cont <- FALSE
+        w_solution <- wTemp
+      }
+    }
+    
+  }
   return(w_solution)
 }
 
@@ -132,7 +154,7 @@ toOptimize <- function(w, Xs,d, total, lambda, costs, distance, params=NULL) {
   return(returnD)
 }
 
-cleanCosts <- function(costs, infinity=1e7, uCostPenalized=1e-2) {
+cleanCosts <- function(costs, uCostPenalized=1e-2) {
   replacedCosts <- costs
   # replacedCosts[is.infinite(replacedCosts) | replacedCosts < 0] <- infinity
   replacedCosts[replacedCosts < 0] <- Inf
@@ -144,12 +166,15 @@ cleanCosts <- function(costs, infinity=1e7, uCostPenalized=1e-2) {
 
 # @param lastLambdas = c(lastLambdaTooSmall, lastLambdaTooBig)
 searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
-                         distance, updateParameters, params, costs,
+                         method, updateParameters, params, costs,
                          maxIter=500, calibTolerance=1e-06
                          , lastLambdas=NULL, lambdaBackup=1, lambdaTest=NULL
                          , setLambdaPerso=FALSE
                          , gap, count=0) {
-
+  
+  ## TODO : change if method is not linear
+  distance <- distanceKhiTwo
+  
   # In pratice, optimal lambdas can be found in a very wide domain,
   # so we must set very wide default values
   defaultLastLambdas <- c(1e-50,1e50)
@@ -182,7 +207,7 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
   writeLines(paste("Test with lambda = ", lambdaTest, sep=""))
 
   w <- penalCalibAlgorithm(Xs, d, total, q,
-                                       distance, updateParameters, params, costs,
+                                       method, updateParameters, params, costs,
                                        maxIter, calibTolerance
                                        , lambda=lambdaTest, setLambdaPerso=FALSE)
 
@@ -200,14 +225,14 @@ searchLambda <- function(Xs, d, total, q=rep(1,length(d)),
   if(maxG - minG >= gap) {
     writeLines("Lambda too small")
     return( searchLambda(Xs, d, total, q=rep(1,length(d)),
-                                     distance, updateParameters, params, costs,
+                                     method, updateParameters, params, costs,
                                      maxIter=500, calibTolerance=1e-06
                                      , lastLambdas=c(lambdaTest, lastLambdas[2]), lambdaBackup=lambdaTest
                                       , gap=gap, count=count+1) )
   } else {
     writeLines("Lambda too big")
     return( searchLambda(Xs, d, total, q=rep(1,length(d)),
-                         distance, updateParameters, params, costs,
+                         method, updateParameters, params, costs,
                          maxIter=500, calibTolerance=1e-06
                          , lastLambdas=c(lastLambdas[1], lambdaTest), lambdaBackup=lambdaTest
                          , gap=gap, count=count+1) )
@@ -281,11 +306,14 @@ distanceTruncated <- function(w,d,bounds, infinity=1e10) {
   return(sum(distance))
 }
 
+## List with distance and its derivative
 distanceRaking <- function(w,d, params=NULL) {
 
   distanceVec <- (w/d)*log(w/d) - (w/d) + 1
   distance <- d*distanceVec
+  
+  distancePrime <- log(w/d)
 
-  return( sum(distance) )
+  return( list(sum(distance), sum(distancePrime)) )
 }
 

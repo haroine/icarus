@@ -2,18 +2,24 @@
 % Please edit documentation in R/calmarFunctions.R
 \name{regroupCalibrationModalities}
 \alias{regroupCalibrationModalities}
-\title{Regroups modalities entered in "vecModalities" into single
-"newModality" in "calibrationMatrix" and adapts "marginMatrix" to the new concept.
-Typical usage is right before a calibration (and after comptutation of marginMatrix), when
-you realise calibration output is better when several modalities are reduced to one.
-(typically very rare modalities, on which calibration constraints are very restrictive).
-Uses pseudo-"call by reference" via eval.parent because 2 objects are modified :
-calibrationMatrix and marginMatrix}
+\title{Regroup calibration modalities}
 \usage{
 regroupCalibrationModalities(calibrationMatrix, marginMatrix,
   calibrationVariable, vecModalities, newModality)
 }
+\arguments{
+\item{calibrationMatrix}{calibration matrix}
+
+\item{marginMatrix}{matrix containing the margins to the Icarus format}
+
+\item{calibrationVariable}{name of the calibration varaible for which regroupment has to be done}
+
+\item{vecModalities}{Initial modalities of the variable}
+
+\item{newModality}{Regrouped modalities of the variable}
+}
 \description{
+Beware, this function modifies the calibrationMatrix and marginMatrix objects entered in parameter?
 Regroups modalities entered in "vecModalities" into single
 "newModality" in "calibrationMatrix" and adapts "marginMatrix" to the new concept.
 Typical usage is right before a calibration (and after comptutation of marginMatrix), when

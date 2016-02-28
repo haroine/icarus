@@ -1,4 +1,4 @@
-# copyright (C) 2015 A.Rebecq and M.Chevalier
+# copyright (C) 2014-2016 A.Rebecq and M.Chevalier
 #### All functions in this file are private methods used by the
 #### "calibration" function
 
@@ -24,17 +24,17 @@ calib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
             params <- bounds
             updateParameters <- identity
           },
-           truncated={
-             inverseDistance <- inverseDistanceTruncated
-             params <- bounds
-             updateParameters <- identity
-           },
-          curlingHat={
-            inverseDistance <- distanceCurlingHat
-            # TODO : check params in list are correctly entered
-            params <- c(0.5,1.5) # For tests only
-            updateParameters <- updateParametersCurlingHat
-          },
+#            truncated={
+#              inverseDistance <- inverseDistanceTruncated
+#              params <- bounds
+#              updateParameters <- identity
+#            },
+#           curlingHat={
+#             inverseDistance <- distanceCurlingHat
+#             # TODO : check params in list are correctly entered
+#             params <- c(0.5,1.5) # For tests only
+#             updateParameters <- updateParametersCurlingHat
+#           },
           {
             print('By default, raking method selected')
             params <- NULL
@@ -48,7 +48,7 @@ calib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
     inverseDistance <- inverseDistanceRaking
     updateParameters <- identity
   }
-  # TODO : additional checks ??
+  # TODO : additional checks ?
 
   return(calibAlgorithm(Xs, d, total, q, inverseDistance,
                         updateParameters, params, maxIter, calibTolerance))
