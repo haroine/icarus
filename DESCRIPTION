@@ -11,4 +11,5 @@ LazyData: true
 Suggests: 
     testthat,
     ggplot2,
-    Rglpk
+    Rglpk,
+    slam

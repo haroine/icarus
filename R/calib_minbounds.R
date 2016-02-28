@@ -6,7 +6,7 @@
 solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
                            maxIter=500, calibTolerance=1e-06, description=TRUE) {
 
-  if (!requireNamespace("Rglpk", quietly = TRUE)) {
+  if (!requireNamespace("Rglpk", quietly = TRUE) || !requireNamespace("slam", quietly = TRUE)) {
       stop("Package Rglpk needed for this function to work. Please install it.",
             call. = FALSE)
   }
