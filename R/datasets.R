@@ -35,9 +35,9 @@ NULL
 #' two different margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}, which results in 
 #' 6 columns of weights.
 #' @author Antoine Rebecq
-#' @references Le Guennec, J., & Sautory, O. (2002). Calmar 2: Une nouvelle version 
-#' de la macro calmar de redressement d’échantillon par calage. 
-#' Journées de Méthodologie Statistique, Paris. INSEE.
+#' @references Le Guennec, J., and Sautory, O. (2002). Calmar 2: Une nouvelle version 
+#' de la macro calmar de redressement d'echantillon par calage. 
+#' Journees de Methodologie Statistique, Paris. INSEE.
 NULL
 
 #' @name poptest_calmar_nr
@@ -54,9 +54,9 @@ NULL
 #' two different margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}, which results in 
 #' 6 columns of weights.
 #' @author Antoine Rebecq
-#' @references Le Guennec, J., & Sautory, O. (2002). Calmar 2: Une nouvelle version 
-#' de la macro calmar de redressement d’échantillon par calage. 
-#' Journées de Méthodologie Statistique, Paris. INSEE.
+#' @references Le Guennec, J., and Sautory, O. (2002). Calmar 2: Une nouvelle version 
+#' de la macro calmar de redressement d'echantillon par calage. 
+#' Journees de Methodologie Statistique, Paris. INSEE.
 NULL
 
 #' @name table_margins_1
@@ -101,8 +101,8 @@ NULL
 NULL
 
 #' @name calWeights_ex2
-#' @title Calibration weights for \code{\cite{data_ex2}}
-#' @description Calibration weights computed with Calmar2 for the small example \code{\cite{data_ex2}}.
+#' @title Calibration weights for \code{\link{data_ex2}}
+#' @description Calibration weights computed with Calmar2 for the small example \code{\link{data_ex2}}.
 #' @docType data
 #' @usage calWeights_ex2
 #' @format 1 column "id", unique id for each of the 15 units in sample.
