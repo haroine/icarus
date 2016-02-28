@@ -6,7 +6,7 @@ Authors@R: c(person("Antoine Rebecq", role=c("aut","cre"),
 Description: Icarus provides user-friendly tools for calibration in survey sampling. The package is production-oriented, and its interface is inspired by the famous popular macro "Calmar" for SAS, so that "Calmar" users can quickly get used to gaston. In addition to calibration (with linear, raking and logit methods), gaston features functions for calibration on tight bounds and penalized calibration.
 Depends: 
     R (>= 3.1.1)
-License: GPLv3
+License: GPL-3
 LazyData: true
 Suggests: 
     testthat,
