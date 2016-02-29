@@ -2,7 +2,7 @@ Package: icarus
 Title: Icarus (Icarus Calibrates And Reweights Units in Samples)
 Version: 0.2
 Authors@R: c(person("Antoine Rebecq", role=c("aut","cre"),
-    email = "haroine.git@rebecq.fr"))
+    email = "antoine.rebecq@m4x.org"))
 Description: Icarus provides user-friendly tools for calibration in survey sampling. The package is production-oriented, and its interface is inspired by the famous popular macro "Calmar" for SAS, so that "Calmar" users can quickly get used to gaston. In addition to calibration (with linear, raking and logit methods), gaston features functions for calibration on tight bounds and penalized calibration.
 Depends: 
     R (>= 3.1.1)
