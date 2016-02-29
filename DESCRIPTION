@@ -1,4 +1,4 @@
-Package: Icarus
+Package: icarus
 Title: Icarus (Icarus Calibrates And Reweights Units in Samples)
 Version: 0.2
 Authors@R: c(person("Antoine Rebecq", role=c("aut","cre"),
