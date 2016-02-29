@@ -1,13 +1,13 @@
-citHeader("To cite Icarus in publications use:")
+citHeader("To cite icarus in publications use:")
 
-meta <- packageDescription("Icarus")
+meta <- packageDescription("icarus")
 year <- sub("-.*", "", meta$Date)
 note <- sprintf("R package version %s", meta$Version)
 url <- meta$URL
 
 citEntry(entry="Manual",
 	title="{Icarus}: an R package for calibration in survey sampling",	
-	author=personList(as.person("Rebecq A.")),
+	author=personList(as.person("Antoine Rebecq")),
 	year=year,
 	note=note,
 	url=url,
