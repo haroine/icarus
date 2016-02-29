@@ -94,8 +94,6 @@ Metron 66.1 (2008): 5-20.
 Vanderhoeft, Camille. Generalised calibration at statistics Belgium: SPSS Module G-CALIB-S and current practices.
 Inst. National de Statistique, 2001.
 
-Gros, Emmanuel and Rebecq, Antoine, "TODO", preprint
-
 Le Guennec, Josiane, and Olivier Sautory. "Calmar 2: Une nouvelle version
 de la macro calmar de redressement d’échantillon par calage." Journees de Methodologie Statistique,
 Paris. INSEE (2002).
