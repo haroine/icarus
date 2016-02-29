@@ -59,13 +59,13 @@ test_that("Calibration functions check out with Calmar", {
                          , method="linear", description=FALSE, scale=TRUE)
   wCalRakingNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
                            , method="raking", description=FALSE, scale=TRUE)
-#   wCalLogitNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
-#                            , method="logit", bounds=c(0.2,1.9), description=TRUE, scale=TRUE)
+  wCalLogitNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
+                           , method="logit", bounds=c(0.1,2.0), description=FALSE, scale=TRUE, popTot=50000)
   
   expect_equal(wCalLinNR, poptest_calmar_nr$weight_cal_lin, tolerance=1e-6)
   expect_equal(wCalRakingNR, poptest_calmar_nr$weight_cal_raking, tolerance=1e-6)
-#   expect_equal(wCalLogitNR, poptest_calmar_nr$weight_cal_logit, tolerance=1e-6)
-#   
+  expect_equal(wCalLogitNR, poptest_calmar_nr$weight_cal_logit, tolerance=1e-6)
+  
 #   testDistrib <- poptest_calmar_nr$weight_cal_logit/sampleNR$weight * sum(sampleNR$weight) / 50000 
 #   print(summary(testDistrib))
   
@@ -73,12 +73,12 @@ test_that("Calibration functions check out with Calmar", {
                            , method="linear", description=FALSE, scale=TRUE)
   wCalRakingNR2 <- calibration(data=sampleNR, marginMatrix=table_margins_2, popTot = 50000, pct=T, colWeights="weight"
                               , method="raking", description=FALSE, scale=TRUE)
-  #   wCalLogitNR2 <- calibration(data=sampleNR, marginMatrix=table_margins_2, popTot = 50000, pct=T, colWeights="weight"
-  #                            , method="logit", bounds=c(0.2,1.9), description=TRUE, scale=TRUE)
+  wCalLogitNR2 <- calibration(data=sampleNR, marginMatrix=table_margins_2, popTot = 50000, pct=T, colWeights="weight"
+                             , method="logit", bounds=c(0.1,2.0), description=FALSE, scale=TRUE)
   
   expect_equal(wCalLinNR2, poptest_calmar_nr$weight_cal_lin_2, tolerance=1e-6)
   expect_equal(wCalRakingNR2, poptest_calmar_nr$weight_cal_raking_2, tolerance=1e-6)
-  #   expect_equal(wCalLogitNR2, poptest_calmar_nr$weight_cal_logit_2, tolerance=1e-6)
+  expect_equal(wCalLogitNR2, poptest_calmar_nr$weight_cal_logit_2, tolerance=1e-6)
   
 })
 
