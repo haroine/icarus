@@ -84,4 +84,20 @@ column containing the final calibrated weights
 \description{
 Performs calibration on margins with several methods and customizable parameters
 }
+\references{
+Deville, Jean-Claude, and Carl-Erik Särndal. "Calibration estimators in survey sampling."
+Journal of the American statistical Association 87.418 (1992): 376-382.
+
+Bocci, J., and C. Beaumont. "Another look at ridge calibration."
+Metron 66.1 (2008): 5-20.
+
+Vanderhoeft, Camille. Generalised calibration at statistics Belgium: SPSS Module G-CALIB-S and current practices.
+Inst. National de Statistique, 2001.
+
+Gros, Emmanuel and Rebecq, Antoine, "TODO", preprint
+
+Le Guennec, Josiane, and Olivier Sautory. "Calmar 2: Une nouvelle version
+de la macro calmar de redressement d’échantillon par calage." Journees de Methodologie Statistique,
+Paris. INSEE (2002).
+}
 

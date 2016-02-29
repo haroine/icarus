@@ -50,6 +50,15 @@
 #' @param exportDistributionTable File name to which the distribution table of before/after
 #' weights shown when description is TRUE is exported. Requires package "xtable"
 #'
+#' @references Deville, Jean-Claude, and Carl-Erik Särndal. "Calibration estimators in survey sampling." 
+#' Journal of the American statistical Association 87.418 (1992): 376-382.
+#' @references Bocci, J., and C. Beaumont. "Another look at ridge calibration." 
+#' Metron 66.1 (2008): 5-20.
+#' @references Vanderhoeft, Camille. Generalised calibration at statistics Belgium: SPSS Module G-CALIB-S and current practices. 
+#' Inst. National de Statistique, 2001.
+#' @references Le Guennec, Josiane, and Olivier Sautory. "Calmar 2: Une nouvelle version 
+#' de la macro calmar de redressement d’échantillon par calage." Journees de Methodologie Statistique, 
+#' Paris. INSEE (2002).
 #' @return column containing the final calibrated weights
 #'
 #' @export
