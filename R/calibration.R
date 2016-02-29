@@ -49,15 +49,31 @@
 #' description is TRUE is exported. Requires package "ggplot2"
 #' @param exportDistributionTable File name to which the distribution table of before/after
 #' weights shown when description is TRUE is exported. Requires package "xtable"
+#' 
+#' @examples
+#' N <- 300 ## population total
+#' ## Horvitz Thompson estimator of the mean: 1.666667
+#' weightedMean(data_ex2$cinema, data_ex2$poids, N) 
+#' ## Enter calibration margins:
+#' mar1 <- c("categ",3,80,90,60)
+#' mar2 <- c("sexe",2,140,90,0)
+#' mar3 <- c("service",2,100,130,0)
+#' mar4 <- c("salaire", 0, 470000,0,0)
+#' margins <- rbind(mar1, mar2, mar3, mar4)
+#' ## Compute calibrated weights with raking ratio method
+#' wCal <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
+#'                             , method="raking", description=FALSE)
+#' ## Calibrated estimate: 2.471917
+#' weightedMean(data_ex2$cinema, wCal, N)
 #'
-#' @references Deville, Jean-Claude, and Carl-Erik Särndal. "Calibration estimators in survey sampling." 
+#' @references Deville, Jean-Claude, and Carl-Erik Sarndal. "Calibration estimators in survey sampling." 
 #' Journal of the American statistical Association 87.418 (1992): 376-382.
 #' @references Bocci, J., and C. Beaumont. "Another look at ridge calibration." 
 #' Metron 66.1 (2008): 5-20.
 #' @references Vanderhoeft, Camille. Generalised calibration at statistics Belgium: SPSS Module G-CALIB-S and current practices. 
 #' Inst. National de Statistique, 2001.
 #' @references Le Guennec, Josiane, and Olivier Sautory. "Calmar 2: Une nouvelle version 
-#' de la macro calmar de redressement d’échantillon par calage." Journees de Methodologie Statistique, 
+#' de la macro calmar de redressement d'echantillon par calage." Journees de Methodologie Statistique, 
 #' Paris. INSEE (2002).
 #' @return column containing the final calibrated weights
 #'

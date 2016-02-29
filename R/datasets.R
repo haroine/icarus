@@ -82,8 +82,8 @@ NULL
 
 #' @name data_ex2
 #' @title A small example sample for calibration with Icarus
-#' @description This table features a samples of 15 units, used in a small survey
-#' to determine how frequently the employees of a firm go the movies (column "cinema").
+#' @description This table features a samples of 15 units (drawn from a population of size 300), 
+#' used in a small survey to determine how frequently the employees of a firm go the movies (column "cinema").
 #' Some auxiliary variables are given, which allows the use of calibration to improve
 #' estimates. Margins for these auxiliary variables are known:
 #' categ: 80 (modality 1) ; 90 (modality 2) ; 60 (modality 3)
