@@ -67,9 +67,8 @@ HTtotals = function(dummyModalitiesMatrix, weights)
   return(weights%*%dummyModalitiesMatrix)
 }
 
-# TODO : ATTENTION, le format change (30/6/14) !!!
-# -> maintenant on met le nom de la colonne a gauche
-# => "createCalibrationMatrix" est une fonction de compatibilité avec l'ancienne version
+# "createCalibrationMatrix" ensures compatibility with first version of icarus 
+# (then called gaston 0.0.1)
 createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
 {
   # Selection des variables de calage dans la table

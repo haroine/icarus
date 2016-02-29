@@ -45,11 +45,6 @@ solveMinBoundsCalib <- function(Xs, d, total, q=NULL,
     writeLines(paste("U =",max(gSol)))
   }
 
-  ## TODO : what if there is no solution ?
-  ## Test avec données ex2:
-  # 1.663102
-  # 0.3368984
-
   return(gSol)
 
 }
