@@ -57,13 +57,11 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
       modality = 1
 
     modalitiesIChar <- modalities[i]
-    print(str(col))
+
     if(is.numeric(col)) {
       modalitiesIChar <- formatC(modalitiesIChar, width = maxChar, format = "d", flag = "0")
       col <- formatC(col, width = maxChar, format = "d", flag = "0")
     }
-    print(modalitiesIChar)
-    print(col)
     
     dummyMatrix[,i][col==modalitiesIChar] = modality
     names[i] = paste(nameCol,modalities[i],sep="_")
