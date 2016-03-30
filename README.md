@@ -8,7 +8,13 @@ To cite Icarus in publications use: Rebecq, Antoine (2016). Icarus: an R package
 
 ## Install
 
-To install the latest version of icarus, you can use devtools and install directly from this github repo:
+You can use the following instruction to install icarus (from CRAN):
+
+```
+install.packages("icarus")
+```
+
+However, if you wish to install the latest version of icarus, you can use devtools and install directly from this github repo:
 
 ```
 install.packages("devtools")
