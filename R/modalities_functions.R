@@ -18,6 +18,7 @@
 #' @export
 colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
 {
+
   if(is.null(modalities))
   {
     modalities = unique(col)
@@ -37,6 +38,14 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
   else
     dummyMatrix = matrix(0, length(col), nModalities, byrow=T)
   names = rep(NULL,nModalities)
+  
+  ## Treat bug with numeric names of modalities
+  ## (so that modalities "10","1","2" are correctly re-ordered in
+  ## "01","02","10" instead of "1","10","2")
+  maxChar <- max(nchar(modalities))
+  if(is.numeric(modalities)) {
+    modalities <- formatC(modalities, width = maxChar, format = "d", flag = "0")
+  }
 
   # Fill with dummies
   N = nModalities
@@ -47,7 +56,16 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
     else
       modality = 1
 
-    dummyMatrix[,i][col==modalities[i]] = modality
+    modalitiesIChar <- modalities[i]
+    print(str(col))
+    if(is.numeric(col)) {
+      modalitiesIChar <- formatC(modalitiesIChar, width = maxChar, format = "d", flag = "0")
+      col <- formatC(col, width = maxChar, format = "d", flag = "0")
+    }
+    print(modalitiesIChar)
+    print(col)
+    
+    dummyMatrix[,i][col==modalitiesIChar] = modality
     names[i] = paste(nameCol,modalities[i],sep="_")
   }
 
@@ -55,7 +73,7 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
   if(fillWithRest) names[N+1] = "ZZZZZZZZZ" # Ugly hack useful to sort by colnames and leaving "modality_other" at the end
 
   colnames(dummyMatrix) = names
-
+  
   # order columns by alphanumeric order
   dummyMatrix = dummyMatrix[,order(colnames(dummyMatrix))]
 
