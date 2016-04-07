@@ -482,62 +482,53 @@ checkNumberMargins = function(data, marginMatrix) {
 #' @param newModality Regrouped modalities of the variable
 #' @export
 regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibrationVariable, vecModalities, newModality) {
-
+  
   # First, check if number of modalities match in calibrationMatrix and marginMatrix,
   # otherwise stop
   if(!checkNumberMargins(calibrationMatrix, marginMatrix))
     stop("Number of modalities must match between calibrationMatrix and marginMatrix to regroup calibration modalities.")
-
+  
   newCalibrationMatrix <- calibrationMatrix
   newMarginMatrix <- marginMatrix
-
+  
   ## Modification in calibrationMatrix
   newCalibrationMatrix[calibrationVariable] <- regroupUnContiguuousModalities(data.matrix(newCalibrationMatrix[calibrationVariable]), vecModalities, newModality)
-
+  
   ## Modification in marginMatrix
-  # Rank of modified modalities in calibrationMatrix
+  ## TODO : produce modifiedLine
   calVarModalities <- unique(data.matrix(calibrationMatrix[calibrationVariable]))
-  modalitiesRanks <- rank(calVarModalities)
-  rankModalitiesDF <- as.data.frame(cbind(calVarModalities,modalitiesRanks))
-
-  vecRanks <- rankModalitiesDF[data.matrix(rankModalitiesDF[calibrationVariable]) %in% vecModalities,]["modalitiesRanks"][,1]
+  
+  if(newModality %in% calVarModalities) {
+    stop("New modality cannot be a modality that already exists in calibration matrix")
+  }
+  
+  orderedCalVarModalities <- calVarModalities[order(calVarModalities)]
+  indicesVecModalities <- which(orderedCalVarModalities %in% vecModalities)
+  indicesVecModalities <- indicesVecModalities+2 ## First two columns are name and nModalities
+  
   modifiedLine <- marginMatrix[marginMatrix[,1] == calibrationVariable,]
-
-  # Modify number of modalities in second column of marginMatrix
-  # If number of modalities == 1, stop
-  oldModalitiesNumber = as.numeric(modifiedLine[2])
-  modifiedLine[2] <- as.character(oldModalitiesNumber - length(vecModalities) + 1)
-
-  if( modifiedLine[2] == "1" ) {
-    stop("Margin matrix cannot reduce non-numeric margins to numeric margins")
-  }
-
-  regroupSum = sum(as.numeric(modifiedLine[vecRanks+2]))
-
-  # Delete regrouped modalities from line
-  deletedModalities <- vecRanks
-  modifiedLine[deletedModalities+2] <- NA
-  modifiedLine <- modifiedLine[!is.na(modifiedLine)]
-
+  sumRegrouped <- sum(as.numeric(modifiedLine[indicesVecModalities]))
+  modifiedLine <- modifiedLine[-indicesVecModalities]
+  
+  # Insert new margin (sum) to the right place
+  modifiedLine <- modifiedLine[modifiedLine != 0]
   newCalVarModalities <- unique(data.matrix(newCalibrationMatrix[calibrationVariable]))
-  newModalitiesRanks <- rank(newCalVarModalities)
-  rankNewModalitiesDF <- as.data.frame(cbind(newCalVarModalities,newModalitiesRanks))
-
-  insertPosition = rankNewModalitiesDF[rankNewModalitiesDF[,1] == newModality,]$newModalitiesRanks # Rank of new modality in calibrationMatrix modalities
-
-  # Insert regroupSum in modifiedLine
-  if(insertPosition+2 > length(modifiedLine)) {
-    modifiedLine[insertPosition+2] <- regroupSum
-  } else {
-    modifiedLine <- c(modifiedLine[1:(insertPosition+2-1)],regroupSum,modifiedLine[(insertPosition+2):length(modifiedLine)])
-  }
-
+  orderedNewCalVarModalities <- newCalVarModalities[order(newCalVarModalities)]
+  
+  insertPosition <- which(orderedNewCalVarModalities==newModality)
+  modifiedLine <- c(modifiedLine[1:(2+insertPosition-1)],sumRegrouped,
+                    modifiedLine[(2+insertPosition):length(modifiedLine)])
+  
+  newNModalities <- as.numeric(modifiedLine[2]) - length(vecModalities) + 1
+  modifiedLine[2] <- newNModalities
+  
+  
   # Add 0s to end line
   modifiedLine <- c(modifiedLine, rep("0.0000",ncol(marginMatrix) - length(modifiedLine)))
-
+  
   # Careful, sum of weights must be equal to 1 even after modalities have been regrouped
   sumMarginLine <- sum(as.numeric(modifiedLine[3:length(modifiedLine)]))
-
+  
   if( sumMarginLine != 1 ) {
     #print(modifiedLine)
     maxMarginValue <- max(as.numeric(modifiedLine[3:as.numeric(modifiedLine[2])+2]))
@@ -547,16 +538,16 @@ regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibr
     modifiedLine[maxIndex+2] <- maxMarginValue + 1 - sumMarginLine
     #print(modifiedLine)
   }
-
+  
   # Replace in marginMatrix
   newMarginMatrix[marginMatrix[,1] == calibrationVariable,] <- modifiedLine
-
+  
   # Check if last column of margin matrix is all 0s. If it is, drop last column
   # (means larger line has been reduced). Continue to do so until last colmun is not only 0s.
   while( sum(as.numeric(newMarginMatrix[,ncol(newMarginMatrix)])) == 0 ) {
     newMarginMatrix <- newMarginMatrix[, -ncol(newMarginMatrix)]
   }
-
+  
   eval.parent(substitute(calibrationMatrix <- newCalibrationMatrix))
   eval.parent(substitute(marginMatrix <- newMarginMatrix))
 }
