@@ -529,11 +529,11 @@ regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibr
   # Careful, sum of weights must be equal to 1 even after modalities have been regrouped
   sumMarginLine <- sum(as.numeric(modifiedLine[3:length(modifiedLine)]))
   
-  if( sumMarginLine != 1 ) {
+  if( sumMarginLine+1 != 2 ) { ## Stupid hack because test == 1 seems to be bugged??
     #print(modifiedLine)
     maxMarginValue <- max(as.numeric(modifiedLine[3:as.numeric(modifiedLine[2])+2]))
     #print(maxMarginValue)
-    maxIndex <- which.max(as.numeric(modifiedLine[3:as.numeric(modifiedLine[2])+2]))
+    maxIndex <- which(as.numeric(modifiedLine[3:length(modifiedLine)]) == maxMarginValue)
     #print(maxIndex)
     modifiedLine[maxIndex+2] <- maxMarginValue + 1 - sumMarginLine
     #print(modifiedLine)
