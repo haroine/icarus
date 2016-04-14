@@ -565,6 +565,10 @@ regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibr
 #' @export
 addMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thresholdAdjustToOne = 0.01) {
 
+  if(varName %in% marginMatrix[,1]) {
+    stop(paste(varName,"is already in margin matrix."))
+  }
+  
   newMarginMatrix <- marginMatrix
 
   # Length of vecTotals :
