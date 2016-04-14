@@ -495,7 +495,6 @@ regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibr
   newCalibrationMatrix[calibrationVariable] <- regroupUnContiguuousModalities(data.matrix(newCalibrationMatrix[calibrationVariable]), vecModalities, newModality)
   
   ## Modification in marginMatrix
-  ## TODO : produce modifiedLine
   calVarModalities <- unique(data.matrix(calibrationMatrix[calibrationVariable]))
   
   if(newModality %in% calVarModalities) {
@@ -524,14 +523,15 @@ regroupCalibrationModalities <- function(calibrationMatrix, marginMatrix, calibr
   
   
   # Add 0s to end line
+  modifiedLine <- modifiedLine[1:(as.numeric(modifiedLine[2])+2)]
   modifiedLine <- c(modifiedLine, rep("0.0000",ncol(marginMatrix) - length(modifiedLine)))
   
   # Careful, sum of weights must be equal to 1 even after modalities have been regrouped
   sumMarginLine <- sum(as.numeric(modifiedLine[3:length(modifiedLine)]))
   
-  if( sumMarginLine+1 != 2 ) { ## Stupid hack because sumMarginLine == 1 seems to be bugged??
+  if( sumMarginLine != 1 ) {
 
-    maxMarginValue <- max(as.numeric(modifiedLine[3:as.numeric(modifiedLine[2])+2]))
+    maxMarginValue <- max(as.numeric(modifiedLine[3:(as.numeric(modifiedLine[2])+2)]))
     maxIndex <- which(as.numeric(modifiedLine[3:length(modifiedLine)]) == maxMarginValue)
     modifiedLine[maxIndex+2] <- maxMarginValue + 1 - sumMarginLine
   }
