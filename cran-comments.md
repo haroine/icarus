@@ -1,18 +1,19 @@
-## Resubmission
-This is a resubmission. In this version I have:
-
-* Single-quoted words in DESCRIPTION
-
-* Removed erroneous references to package's former name
-
 ## Test environments
-* local ubuntu 14.04, R 3.2.3
+* local ubuntu 14.04, R 3.2.4
 * win-builder (devel and release)
-* Windows 8, R 3.2.2
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
 
 There was 1 NOTE:
 
-* This is my first package submitted to CRAN
+* Possibly mis-spelled words in DESCRIPTION:
+  Reweights (2:23)
+  SAS (3:186)
+  logit (3:300)
+
+  These words aren't mis-spelled and text in DESCRIPTION didn't change since last submission.
+
+## Downstream dependencies
+
+* There are 0 downstream dependencies for icarus.
