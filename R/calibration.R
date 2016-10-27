@@ -146,6 +146,10 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
       }
     }
     
+    if(is.null(g)) {
+      stop(paste("No convergence in", maxIter, "iterations."))
+    }
+    
     data[colCalibratedWeights] = g*weights
     
   } else {
