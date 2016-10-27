@@ -62,15 +62,19 @@ test_that("Penalized calibration checks out", {
 
   costsInfty <- c(Inf, Inf, Inf, Inf)
 
-  wCalesLin <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
-                           , description=FALSE, costs=costsInfty)
+  expect_warning(
+    wCalesLin <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
+                           , description=FALSE, costs=costsInfty),
+    "all costs are infinite", ignore.case=T)
 
   expect_equal(wCalesLin, calWeights_ex2$wLinear, tolerance=1e-4)
 
   ## Test bad specification of infinite costs
   costsInfty2 <- c(-3, Inf, -1, -5000)
-  wCalesLin2 <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
-                              , description=FALSE, costs=costsInfty)
+  expect_warning(
+    wCalesLin2 <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
+                              , description=FALSE, costs=costsInfty2),
+    "all costs are infinite", ignore.case=T)
 
   expect_equal(wCalesLin2, wCalesLin, tolerance=1e-7)
 

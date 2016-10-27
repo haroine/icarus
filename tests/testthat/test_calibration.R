@@ -113,8 +113,10 @@ test_that("Test margin stats", {
   
   testCosts <- rep(Inf, length(table_margins_1[,1]))
 
-  sample$wCal_penal <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
-                             , method="linear", description=FALSE, costs=testCosts, popTotal = 50000)
+  expect_warning(
+    sample$wCal_penal <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                             , method="linear", description=FALSE, costs=testCosts, popTotal = 50000),
+    "all costs are infinite", ignore.case=T)
   
   testStats3 <- marginStats(sample, table_margins_1, colWeights = "weight", colCalibratedWeights = "wCal", popTotal = 50000)
   expect_equal(testStats3[,4], rep(0, length(testStats3[,1])))
