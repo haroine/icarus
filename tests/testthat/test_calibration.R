@@ -87,6 +87,30 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalRakingNR2, poptest_calmar_nr$weight_cal_raking_2, tolerance=1e-6)
   expect_equal(wCalLogitNR2, poptest_calmar_nr$weight_cal_logit_2, tolerance=1e-6)
   
+  ## Check that errors are correctly thrown when impossible
+  ## calibration margins are entered
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , method="linear", description=FALSE, popTotal = 51000, maxIter=100),
+    "no convergence", ignore.case=T)
+  
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , method="raking", description=FALSE, popTotal = 51000, maxIter=100),
+    "no convergence", ignore.case=T)
+  
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , method="logit", bounds=c(0.5,1.5), description=FALSE, 
+                popTotal = 51000, maxIter=100),
+    "no convergence", ignore.case=T)
+  
+  ## Check that bounds are correctly required for logit
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+              , method="logit", description=FALSE),
+    "must enter LO and UP bounds", ignore.case=T)
+  
 })
 
 test_that("Test margin stats", {
