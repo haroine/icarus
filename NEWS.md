@@ -1,9 +1,9 @@
-# icarus 0.2.1
+# icarus 0.2.2
 
 ## Bug corrections
 
-* Fixed uncorrect ordering of modalities for more than 10 numeric modalities in `calibration`
+* Fixed a critical bug that produced errors in linear method when used with categorical variables
 
-* Fixed uncorrect formatting of margin matrix in some rare cases in `regroupCalibrationModalities`
+* Improved handling of non convergence so that output is more user friendly
 
-* Add example to doc for `regroupCalibrationModalities`
+* Added unit tests for warnings and errors

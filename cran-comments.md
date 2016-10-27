@@ -1,5 +1,6 @@
 ## Test environments
-* local ubuntu 14.04, R 3.2.4
+* Linux Mint 17.3, R 3.3.1
+* Ubuntu 14.04, R 3.3.1
 * win-builder (devel and release)
 
 ## R CMD check results
