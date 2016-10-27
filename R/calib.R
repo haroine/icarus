@@ -134,7 +134,7 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
 ##### form of the inverse functions of the distance used AND
 ##### its derivative.
 inverseDistanceLinear <- function(x, params=NULL) {
-  return(list((1+x),0))
+  return(list((1+x),1))
 }
 
 inverseDistanceRaking <- function(x, params=NULL) {

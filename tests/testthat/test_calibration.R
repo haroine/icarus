@@ -12,6 +12,13 @@ test_that("Calibration functions check out with Calmar", {
   wCalLin <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
                          , method="linear", description=FALSE)
   
+  ## Just checking that calibration works with linear method
+  ## when all variables are categorical
+  wCalLin_categ <- calibration(data=sample, marginMatrix=table_margins_1[10:11,], colWeights="weight"
+                               , method="linear", description=FALSE)
+  
+  expect_length(wCalLin_categ, 1000)
+  
   wCalRaking <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
                          , method="raking", description=FALSE, pct=FALSE)
   
