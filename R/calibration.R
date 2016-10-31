@@ -90,11 +90,6 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     scale <- TRUE
   }
   
-  ## Clean costs for penalized calibration
-  #   if(!is.null(costs)) {
-  #     costs <- cleanCosts(costs, uCostPenalized)
-  #   }
-  
   if(check) {
     
     ## Check if all weights are not NA and greater than zero.
