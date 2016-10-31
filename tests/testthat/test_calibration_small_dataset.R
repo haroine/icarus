@@ -67,6 +67,23 @@ test_that("Calibration functions check out with Calmar", {
                 , method="logit", bounds=c(0.6,2.0), description=FALSE),
     "no convergence", ignore.case=T)
   
+  ## Errors in weights column
+  data_ex2$poids_bug <- data_ex2$poids
+  data_ex2$poids_bug[c(1,10)] <- c(0,NA)
+  
+  expect_error(
+    calibration(data=data_ex2, marginMatrix=margins, colWeights="poids_bug"
+              , method="linear", description=TRUE),
+    "Some weights are NA", ignore.case=T)
+  
+  data_ex2$poids_bug[c(1,10)] <- c(0,0)
+  
+  expect_error(
+    calibration(data=data_ex2, marginMatrix=margins, colWeights="poids_bug"
+                , method="linear", description=TRUE),
+    "Some weights are negative or zero", ignore.case=T)
+  
+  
 })
 
 test_that("Penalized calibration checks out", {

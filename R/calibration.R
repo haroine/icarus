@@ -97,6 +97,21 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
   
   if(check) {
     
+    ## Check if all weights are not NA and greater than zero.
+    checkWeights <- as.numeric(data.matrix(data[colWeights]))
+
+    if( length(checkWeights) <= 0 ) {
+      stop("Weights column has length zero")
+    }
+    
+    if( any((is.na(checkWeights)) ) ) {
+      stop("Some weights are NA")
+    }
+    
+    if( any((checkWeights <= 0) ) ) {
+      stop("Some weights are negative or zero")
+    }
+    
     # Check NAs on calibration variables
     matrixTestNA = missingValuesMargins(data, marginMatrix)
     testNA = as.numeric(matrixTestNA[,2])
