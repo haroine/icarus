@@ -134,11 +134,6 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
   # (uniform adjustment)
   weights <- as.numeric(data.matrix(data[colWeights]))
   
-  ## For tests
-  #   Xs_glob <<- matrixCal
-  #   total_glob <<- formattedMargins
-  #   d_glob <<- weights
-  
   if(scale) {
     if(is.null(popTotal)) {
       stop("When scale is TRUE, popTotal cannot be NULL")
