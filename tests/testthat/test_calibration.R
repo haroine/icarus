@@ -87,6 +87,17 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalRakingNR2, poptest_calmar_nr$weight_cal_raking_2, tolerance=1e-6)
   expect_equal(wCalLogitNR2, poptest_calmar_nr$weight_cal_logit_2, tolerance=1e-6)
   
+  ## Checks for qk vectors
+  wCalLin_q1 <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                         , q=rep(1,nrow(sample)), method="linear", description=FALSE)
+  
+  wCalLinNR_q1 <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
+                           , q=rep(1,nrow(sampleNR)), method="linear", description=FALSE, scale=TRUE)
+  
+  expect_equal(wCalLin_q1, poptest_calmar$weight_cal_lin, tolerance=1e-6)
+  expect_equal(wCalLinNR_q1, poptest_calmar_nr$weight_cal_lin, tolerance=1e-6)
+  
+  
   ## Check that errors are correctly thrown when impossible
   ## calibration margins are entered
   expect_error(
@@ -110,6 +121,12 @@ test_that("Calibration functions check out with Calmar", {
     calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
               , method="logit", description=FALSE),
     "must enter LO and UP bounds", ignore.case=T)
+  
+  ## Check errors when q is not valid
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , q=rep(1,13), method="linear", description=FALSE),
+    "Vector q must have same length as data", ignore.case=T)
   
 })
 
