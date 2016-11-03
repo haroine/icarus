@@ -13,6 +13,7 @@
 #' @param method The method used to calibrate. Can be "linear", "raking", "logit", "truncated"
 #' @param bounds Two-element vector containing the lower and upper bounds for bounded methods
 #' ("truncated" and "logit")
+#' @param q Vector of q_k weights described in Deville and Sarndal (1992)
 #' @param costs The penalized calibration method will be used, using costs defined by this
 #' vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given
 #' an infinite cost (coefficient of C^-1 matrix is 0)
@@ -78,7 +79,7 @@
 #' @return column containing the final calibrated weights
 #'
 #' @export
-calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL
+calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL, q=NULL
                        , costs=NULL, gap=NULL, popTotal=NULL, pct=FALSE, scale=NULL, description=TRUE
                        , maxIter=2500, check=TRUE, uCostPenalized=1, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE, forceBisection=FALSE
                        , colCalibratedWeights="calWeights", exportDistributionImage=NULL, exportDistributionTable=NULL) {
@@ -118,6 +119,13 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     # check if number of modalities in calibration variables matches marginMatrix
     if(!checkNumberMargins(data, marginMatrix)) stop("Error in number of modalities.")
     
+    ## Basic checks on vector q:
+    if(!is.null(q)) {
+      if( length(q) !=  nrow(data) ) {
+        stop("Vector q must have same length as data")
+      }
+    }
+    
   }
   
   marginCreation <- createFormattedMargins(data, marginMatrix, popTotal, pct)
@@ -143,7 +151,8 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     g <- NULL
     
     if( (is.numeric(bounds)) || (method != "min") ) {
-      g <- calib(Xs=matrixCal, d=weights, total=formattedMargins, method=method, bounds=bounds, maxIter=maxIter)
+      g <- calib(Xs=matrixCal, d=weights, total=formattedMargins, q=q,
+                 method=method, bounds=bounds, maxIter=maxIter)
     } else {
       if( (bounds == "min") || (method == "min")) {
         g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
