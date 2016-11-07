@@ -5,7 +5,7 @@
 \title{Calibration on margins}
 \usage{
 calibration(data, marginMatrix, colWeights, method = "linear",
-  bounds = NULL, costs = NULL, gap = NULL, popTotal = NULL,
+  bounds = NULL, q = NULL, costs = NULL, gap = NULL, popTotal = NULL,
   pct = FALSE, scale = NULL, description = TRUE, maxIter = 2500,
   check = TRUE, uCostPenalized = 1, lambda = NULL,
   precisionBounds = 1e-04, forceSimplex = FALSE, forceBisection = FALSE,
@@ -25,6 +25,8 @@ dataframe}
 
 \item{bounds}{Two-element vector containing the lower and upper bounds for bounded methods
 ("truncated" and "logit")}
+
+\item{q}{Vector of q_k weights described in Deville and Sarndal (1992)}
 
 \item{costs}{The penalized calibration method will be used, using costs defined by this
 vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given
