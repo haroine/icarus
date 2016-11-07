@@ -16,6 +16,7 @@
 #' 1 column "simul_nr" indicates the probability that each unit will respond to the survey.
 #' 1 column "responding". For sampled units, indicates whether unit is respondant to survey (1)
 #' or not (0). Variable is also equal to 0 for units not selected in sample
+#' 1 column "qTest" containing randomly generated q weights used in unit tests
 #' 50000 rows, 1 row per unit in the population.
 #' @author Antoine Rebecq
 #' @references Rebecq, A., & Merly-Alpa, T. Pourquoi minimiser la dispersion des 
@@ -33,7 +34,7 @@ NULL
 #' 1 column "ident", with a unique id for every unit in the sample
 #' 3 methods of calibration are used (linear, raking, and logit with bounds LO=0.2 and UP=1.3) for
 #' two different margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}, which results in 
-#' 6 columns of weights.
+#' 7 columns of weights.
 #' @author Antoine Rebecq
 #' @references Le Guennec, J., and Sautory, O. (2002). Calmar 2: Une nouvelle version 
 #' de la macro calmar de redressement d'echantillon par calage. 
@@ -52,7 +53,7 @@ NULL
 #' 1 column "ident", with a unique id for every unit in the sample
 #' 3 methods of calibration are used (linear, raking, and logit with bounds LO=0.1 and UP=2.0 and parameter ECHELLE=0) for
 #' two different margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}, which results in 
-#' 6 columns of weights.
+#' 7 columns of weights.
 #' @author Antoine Rebecq
 #' @references Le Guennec, J., and Sautory, O. (2002). Calmar 2: Une nouvelle version 
 #' de la macro calmar de redressement d'echantillon par calage. 

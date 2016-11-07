@@ -8,7 +8,7 @@
 1 column "ident", with a unique id for every unit in the sample
 3 methods of calibration are used (linear, raking, and logit with bounds LO=0.2 and UP=1.3) for
 two different margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}, which results in 
-6 columns of weights.}
+7 columns of weights.}
 \usage{
 poptest_calmar
 }

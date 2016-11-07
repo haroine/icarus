@@ -11,6 +11,7 @@ is not selected in the sample.
 1 column "simul_nr" indicates the probability that each unit will respond to the survey.
 1 column "responding". For sampled units, indicates whether unit is respondant to survey (1)
 or not (0). Variable is also equal to 0 for units not selected in sample
+1 column "qTest" containing randomly generated q weights used in unit tests
 50000 rows, 1 row per unit in the population.}
 \usage{
 dataPop
