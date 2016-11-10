@@ -154,8 +154,6 @@ inverseDistanceLogit <- function(x, bounds) {
   
 }
 
-# TODO : truncated method ?
 # TODO : hyperbolic sine
+# TODO : maybe truncated method ?
 
-# TODO : shaped -> "param" function which updates parameters is
-# contained within distance function
