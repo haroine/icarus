@@ -121,9 +121,19 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     
     ## Basic checks on vector q:
     if(!is.null(q)) {
+      
       if( length(q) !=  nrow(data) ) {
         stop("Vector q must have same length as data")
       }
+      
+      if(!is.null(costs)) {
+        stop("q weights not supported with penalized calibration yet")
+      }
+      
+      if(method == "min") {
+        stop("q weights not supported with calibration on min bounds yet")
+      }
+      
     }
     
   }
