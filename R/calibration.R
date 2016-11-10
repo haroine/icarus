@@ -155,7 +155,6 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     
   }
   
-  # TODO : add catching of "no convergence" exception
   if(is.null(costs)) {
     
     g <- NULL
