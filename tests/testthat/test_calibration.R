@@ -97,6 +97,16 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalLin_q1, poptest_calmar$weight_cal_lin, tolerance=1e-6)
   expect_equal(wCalLinNR_q1, poptest_calmar_nr$weight_cal_lin, tolerance=1e-6)
   
+  wCalLin_qTest <- calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                            , q=sample$qTest, method="linear", description=FALSE)
+  
+  wCalRaking_qTest <- calibration(data=sampleNR, marginMatrix=table_margins_2, colWeights="weight",
+                               q=sampleNR$qTest, method="raking", description=FALSE, 
+                               scale = TRUE, pct=TRUE, popTotal = 50000)
+  
+  expect_equal(wCalLin_qTest, poptest_calmar$weight_cal_lin_qtest, tolerance=1e-2)
+  expect_equal(wCalRaking_qTest, poptest_calmar_nr$weight_cal_raking_2_qtest, tolerance=1e-2)
+  
   
   ## Check that errors are correctly thrown when impossible
   ## calibration margins are entered
