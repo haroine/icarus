@@ -138,6 +138,16 @@ test_that("Calibration functions check out with Calmar", {
                 , q=rep(1,13), method="linear", description=FALSE),
     "Vector q must have same length as data", ignore.case=T)
   
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , q=sample$qTest, method="min", description=FALSE),
+    "not supported", ignore.case=T)
+  
+  expect_error(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , q=sample$qTest, costs = rep(1,nrow(sample)), description=FALSE),
+    "not supported", ignore.case=T)
+  
 })
 
 test_that("Test margin stats", {
