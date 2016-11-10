@@ -124,10 +124,6 @@ calibAlgorithm <- function(Xs, d, total, q=NULL,
   return(g)
 }
 
-
-# TODO: add qk vectors
-# TODO: Explain why params in docs (uses S3 and not S4 methods)
-
 ##### Inverse distance functions
 ##### Each of these functions returns a list of the closed
 ##### form of the inverse functions of the distance used AND
