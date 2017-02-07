@@ -119,6 +119,12 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
     # check if number of modalities in calibration variables matches marginMatrix
     if(!checkNumberMargins(data, marginMatrix)) stop("Error in number of modalities.")
     
+    # check that method is specified
+    if(is.null(method)) {
+      warning('Method not specified, raking method selected by default')
+      method <- "raking"
+    }
+    
     ## Basic checks on vector q:
     if(!is.null(q)) {
       

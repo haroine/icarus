@@ -36,14 +36,14 @@ calib <- function(Xs, d, total, q=NULL, method=NULL, bounds = NULL,
 #             updateParameters <- updateParametersCurlingHat
 #           },
           {
-            print('By default, raking method selected')
+            warning('Method not implemented, raking method selected by default')
             params <- NULL
             inverseDistance <- inverseDistanceRaking
             updateParameters <- identity
           }
   )
   } else {
-    print('By default, raking method selected')
+    warning('Method not specified, raking method selected by default')
     params <- NULL
     inverseDistance <- inverseDistanceRaking
     updateParameters <- identity

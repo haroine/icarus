@@ -107,6 +107,22 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalLin_qTest, poptest_calmar$weight_cal_lin_qtest, tolerance=1e-2)
   expect_equal(wCalRaking_qTest, poptest_calmar_nr$weight_cal_raking_2_qtest, tolerance=1e-2)
   
+  ## Check that warning is correctly thrown when
+  ## user selects an incorrect method
+  expect_warning(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                                     , method="truncated", description=FALSE, popTotal = 50000),
+    "not implemented", ignore.case=T)
+  
+  expect_warning(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , method="randomstuff", description=FALSE, popTotal = 50000),
+    "not implemented", ignore.case=T)
+  
+  expect_warning(
+    calibration(data=sample, marginMatrix=table_margins_1, colWeights="weight"
+                , method=NULL, description=FALSE, popTotal = 50000),
+    "not specified", ignore.case=T)
   
   ## Check that errors are correctly thrown when impossible
   ## calibration margins are entered
