@@ -45,7 +45,7 @@
 #' have a large memory size)
 #' @param forceBisection Only used for calibration on tight bounds. Forces the use of the bisection
 #' algorithm to solve calibration on tight bounds
-#' @param colCalibratedWeights The name of the column of final calibrated weights
+#' @param colCalibratedWeights Deprecated. Only used in the scope of calibration function
 #' @param exportDistributionImage File name to which the density plot shown when
 #' description is TRUE is exported. Requires package "ggplot2"
 #' @param exportDistributionTable File name to which the distribution table of before/after
@@ -82,7 +82,17 @@
 calibration = function(data, marginMatrix, colWeights, method="linear", bounds=NULL, q=NULL
                        , costs=NULL, gap=NULL, popTotal=NULL, pct=FALSE, scale=NULL, description=TRUE
                        , maxIter=2500, check=TRUE, uCostPenalized=1, lambda=NULL, precisionBounds=1e-4, forceSimplex=FALSE, forceBisection=FALSE
-                       , colCalibratedWeights="calWeights", exportDistributionImage=NULL, exportDistributionTable=NULL) {
+                       , colCalibratedWeights, exportDistributionImage=NULL, exportDistributionTable=NULL) {
+  
+  
+  ## Deprecate an argument that is only used in the scope
+  ## of this function
+  if (!missing(colCalibratedWeights)) {
+    warning("argument colCalibratedWeights is deprecated; now private 
+            and defaults to 'calWeights'", 
+            call. = FALSE)
+  }
+  colCalibratedWeights <- "calWeights"
   
   # By default, scale is TRUE when popTotal is not NULL, false otherwise
   if(is.null(popTotal)) {
