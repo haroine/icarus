@@ -108,27 +108,14 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
     }
     else
     {
-      ## TODO : change by using parameter pct
-      ## ... this means that pct is considered TRUE by default
-#       if(!is.null(popTotal)) {
-#         popTotalNum <- popTotal
-#       } else {
-#         popTotalNum <- 1
-#       }
-
       n = calmarMatrix[curRow,1]
 
-      ## TODO : change to pct
       ## If categorial margins are not entered as percentages,
       ## do not multiply by popTotal (except if it is popVector !)
       
       if( all(calmarMatrix[curRow,2:(n+1)] < 1) && (is.null(popTotal) || !pct) ) {
         warning(paste("All margins in variable ",curRow,"are less than 1 : should they be considered as percentages ?"))
       }
-      
-#       if( all(calmarMatrix[curRow,2:(n+1)] >= 1) ) {
-#         popTotalNum <- 1
-#       }
       
       if(pct) {
         if(is.null(popTotal)) {
@@ -603,11 +590,11 @@ addMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thresh
     }
   }
 
-  # TODO : adjust vecTotals to 1
+  # Adjust vecTotals to 1
   if( nModality > 1 && sum(vecTotals) != 1  ) {
 
     if(adjustToOne && abs(sum(vecTotals) - 1) < thresholdAdjustToOne) {
-      # TODO : adjust highest value
+      # Adjust highest value
       maxMarginValue <- max(as.numeric(vecTotals))
       maxIndex <- which.max(as.numeric(vecTotals))
       vecTotals[maxIndex] <- maxMarginValue + 1 - sum(vecTotals)
