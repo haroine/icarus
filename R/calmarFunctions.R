@@ -2,8 +2,6 @@
 # Functions designed so that calibration can be made in a familiar
 # setting for Calmar and Calmar2 users
 
-# Remarque : calmarMatrix = "matrice des marges sans la colonne des noms"
-
 nModalities = function(col)
 {
   return(length(unique(col)))
@@ -60,19 +58,18 @@ dummyModalitiesMatrix = function(entryMatrix)
   return(dmatrix)
 }
 
-# TODO : move out of calmarFunctions ?
-# (or at least should be "private")
+#' private function that computes weighted estimates
 HTtotals = function(dummyModalitiesMatrix, weights)
 {
   return(weights%*%dummyModalitiesMatrix)
 }
 
-# "createCalibrationMatrix" ensures compatibility with first version of icarus 
-# (then called gaston 0.0.1)
+#' ensures compatibility with first version of icarus 
+#' (when it was still called gaston 0.0.1)
 createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
 {
-  # Selection des variables de calage dans la table
-  # (ainsi que leur caractere qualitatif / quantitatif)
+  # Select calibration variables in the table
+  # (and indicates whether they are quantitative / categorical)
   selectVector = marginMatrix[,1]
   isQuantitative = as.numeric(marginMatrix[,2])
 
@@ -86,6 +83,7 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
   return(matrixCal)
 }
 
+#' @param calmarMatrix matrix of margins without the names column
 formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FALSE)
 {
   # Create empty vector of margins
@@ -408,27 +406,20 @@ correctCoefsCategorical <- function(marginStatsDF_init, marginMatrix, ncol1=1, n
   
 }
 
-## TODO : deprecate, never used
-## Replaced by checkNumberMargins
-# Check validity of marginMatrix
+
+#' Check validity of marginMatrix (deprecated)
 checkMarginMatrix = function(marginMatrix) {
+  
+  .Deprecated("checkNumberMargins")
 
   checkMatrix = FALSE
 
   if(is.null(marginMatrix)) return(TRUE) # Case NULL is OK
 
-  # TODO :
-  # Check if there are : 1 names column, 1 modalities column and
-  # n other columns with n = max(modalities)
-
-
-  # Check if sum(lines where modalities >=2) = 1.000000
-
-
   return(checkMatrix)
 }
 
-# Displays number of NAs among margins
+#' Displays number of NAs among margins
 missingValuesMargins = function(data, marginMatrix) {
 
   nVar = nrow(marginMatrix)
@@ -444,8 +435,8 @@ missingValuesMargins = function(data, marginMatrix) {
   return(returnMatrix)
 }
 
-# Checks if number of modalities in data matches expected ones according
-# to marginMatrix
+#' Checks if number of modalities in data matches expected ones according
+#' to marginMatrix
 checkNumberMargins = function(data, marginMatrix) {
 
   returnBool = TRUE
