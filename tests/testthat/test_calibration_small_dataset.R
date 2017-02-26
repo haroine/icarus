@@ -30,17 +30,6 @@ test_that("Calibration functions check out with Calmar", {
   expect_equal(wCalesRaking, calWeights_ex2$wRaking, tolerance=1e-5)
   expect_equal(wCalesLogit1, calWeights_ex2$wLogit, tolerance=1e-5)
 
-  ## TODO : write test with pct margins
-
-#   mar1_2 <- c("categ",3,0.35,0.4,0.25)
-#   mar2_2 <- c("sexe",2,0.60,0.40,0)
-#   mar3_2 <- c("service",2,0.45,0.55,0)
-#   mar4_2 <- c("salaire", 0, 470000,0,0)
-#   margins_2 <- rbind(mar1_2, mar2_2, mar3_2, mar4_2)
-# 
-#   wCalesLin_2 <- calibration(data=data_ex2, marginMatrix=margins_2, colWeights="poids"
-#                            , method="linear", description=TRUE, popTotal=250, pct=TRUE)
-
   ## Test estimators value
   expect_equal(HTmean(data_ex2$cinema, wCalesLin), 2.93, tolerance=1e-2)
   expect_equal(HTmean(data_ex2$cinema, wCalesRaking), 3.22, tolerance=1e-2)
@@ -114,7 +103,7 @@ test_that("Penalized calibration checks out", {
 
   expect_equal(wCalesLin2, wCalesLin, tolerance=1e-7)
 
-  ## Test if too wide gap returns linear calibration
+  ## TODO: test if too wide gap returns linear calibration
 #   wPenalized1 <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
 #                              , description=TRUE, costs=c(100,10,1,0.1,Inf)
 #                              , gap=2, popTotal=230)
@@ -144,5 +133,3 @@ test_that("Calibration on minimum bounds checks out", {
   expect_equal(wCalesMin, wCalesMin2, tolerance=1e-6)
 
 })
-
-## TODO : test that error cases are properly handled
