@@ -121,6 +121,10 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
         if(is.null(popTotal)) {
           stop("popTotal has to be set when pct is TRUE")
         } else {
+          
+          ## TODO: if sum is strictly equal to 100,
+          ## divide by 100
+          
           popTotalNum <- popTotal
         }
       } else {
