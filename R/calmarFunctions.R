@@ -122,8 +122,11 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
           stop("popTotal has to be set when pct is TRUE")
         } else {
           
-          ## TODO: if sum is strictly equal to 100,
-          ## divide by 100
+          ## If sum is strictly equal to 100, divide by 100
+          ## (allows for a behavior closer to Calmar2)
+          if( sum(calmarMatrix[curRow,2:(n+1)]) == 100 ) {
+            calmarMatrix[curRow,2:(n+1)] <- calmarMatrix[curRow,2:(n+1)] / 100
+          }
           
           popTotalNum <- popTotal
         }
