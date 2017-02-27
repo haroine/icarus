@@ -164,6 +164,25 @@ test_that("Calibration functions check out with Calmar", {
                 , q=sample$qTest, costs = rep(1,nrow(sample)), description=FALSE),
     "not supported", ignore.case=T)
   
+  ## Test when margins of categorical variables are
+  ## entered in percentages whose sum is 100 instead of 1
+  table_margins_3 <- table_margins_2
+  table_margins_3[10,3:7] <- c(20,20,20,20,20)
+  table_margins_3[11,3:5] <- c(10,60,30)
+  
+  wCalLin3 <- calibration(data=sample, marginMatrix=table_margins_3, colWeights="weight"
+                          , method="linear", description=FALSE, popTotal=popTotal, pct=TRUE)
+  
+  wCalRaking3 <- calibration(data=sample, marginMatrix=table_margins_3, colWeights="weight"
+                             , method="raking", description=FALSE, popTotal=popTotal, pct=TRUE)
+  
+  wCalLogit3 <- calibration(data=sample, marginMatrix=table_margins_3, colWeights="weight"
+                            , method="logit", bounds=c(0.2,1.3), description=FALSE, popTotal=popTotal, pct=TRUE)
+  
+  expect_equal(wCalLin2, wCalLin3, tolerance=1e-6)
+  expect_equal(wCalRaking2, wCalRaking3, tolerance=1e-6)
+  expect_equal(wCalLogit2, wCalLogit3, tolerance=1e-6)
+  
 })
 
 test_that("Test margin stats", {
