@@ -59,7 +59,7 @@ test_that("Calibration functions check out with Calmar", {
                 tolerance=1e-6)
   
   ########### Tests with non-response and scale factor
-  ## TODO : check parameters for logit calibration
+
   sampleNR <- sample[sample$responding==1,]
   
   wCalLinNR <- calibration(data=sampleNR, marginMatrix=table_margins_1, colWeights="weight"
