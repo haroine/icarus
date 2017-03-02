@@ -9,7 +9,7 @@ calibration(data, marginMatrix, colWeights, method = "linear",
   pct = FALSE, scale = NULL, description = TRUE, maxIter = 2500,
   check = TRUE, uCostPenalized = 1, lambda = NULL,
   precisionBounds = 1e-04, forceSimplex = FALSE, forceBisection = FALSE,
-  colCalibratedWeights = "calWeights", exportDistributionImage = NULL,
+  colCalibratedWeights, exportDistributionImage = NULL,
   exportDistributionTable = NULL)
 }
 \arguments{
@@ -72,7 +72,7 @@ have a large memory size)}
 \item{forceBisection}{Only used for calibration on tight bounds. Forces the use of the bisection
 algorithm to solve calibration on tight bounds}
 
-\item{colCalibratedWeights}{The name of the column of final calibrated weights}
+\item{colCalibratedWeights}{Deprecated. Only used in the scope of calibration function}
 
 \item{exportDistributionImage}{File name to which the density plot shown when
 description is TRUE is exported. Requires package "ggplot2"}
