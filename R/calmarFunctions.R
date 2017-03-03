@@ -58,14 +58,16 @@ dummyModalitiesMatrix = function(entryMatrix)
   return(dmatrix)
 }
 
-#' private function that computes weighted estimates
+## private function that computes weighted estimates
+## @keywords internal
 HTtotals = function(dummyModalitiesMatrix, weights)
 {
   return(weights%*%dummyModalitiesMatrix)
 }
 
-#' ensures compatibility with first version of icarus 
-#' (when it was still called gaston 0.0.1)
+## ensures compatibility with first version of icarus 
+## (when it was still called gaston 0.0.1)
+## @keywords internal
 createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
 {
   # Select calibration variables in the table
@@ -83,7 +85,9 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
   return(matrixCal)
 }
 
-#' @param calmarMatrix matrix of margins without the names column
+## Main private function for the creation of the margin matrix
+## @param calmarMatrix matrix of margins without the names column
+## @keywords internal
 formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FALSE)
 {
   # Create empty vector of margins
@@ -413,7 +417,8 @@ checkMarginMatrix = function(marginMatrix) {
   return(checkMatrix)
 }
 
-#' Displays number of NAs among margins
+## Displays number of NAs among margins
+## @keywords internal
 missingValuesMargins = function(data, marginMatrix) {
 
   nVar = nrow(marginMatrix)
@@ -429,8 +434,9 @@ missingValuesMargins = function(data, marginMatrix) {
   return(returnMatrix)
 }
 
-#' Checks if number of modalities in data matches expected ones according
-#' to marginMatrix
+## Checks if number of modalities in data matches expected ones according
+## to marginMatrix
+## @keywords internal
 checkNumberMargins = function(data, marginMatrix) {
 
   returnBool = TRUE
@@ -658,6 +664,7 @@ modifyMargin <- function(marginMatrix, varName, vecTotals, adjustToOne=TRUE, thr
 }
 
 ## Private function that creates margins to the right format
+## @keywords internal
 createFormattedMargins <- function(data, marginMatrix, popTotal=NULL, pct=FALSE) {
 
   if(is.null(marginMatrix)) {
