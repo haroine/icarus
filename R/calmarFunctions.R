@@ -405,7 +405,7 @@ correctCoefsCategorical <- function(marginStatsDF_init, marginMatrix, ncol1=1, n
 }
 
 
-#' Check validity of marginMatrix (deprecated)
+## Check validity of marginMatrix (deprecated)
 checkMarginMatrix = function(marginMatrix) {
   
   .Deprecated("checkNumberMargins")
