@@ -1,9 +1,9 @@
-# icarus 0.2.2
+# icarus 0.3.0
 
-## Bug corrections
+## New features
 
-* Fixed a critical bug that produced errors in linear method when used with categorical variables
+* Add qk weights of Deville and Sarndal (1992) in calibration, as well as documentation and tests with corresponding parameter
 
-* Improved handling of non convergence so that output is more user friendly
+* Add some warnings to help user understand outputs or debug
 
-* Added unit tests for warnings and errors
+* Add support for percentages summing to 100 instead of 1 for categorical margins

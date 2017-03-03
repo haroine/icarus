@@ -1,6 +1,5 @@
 ## Test environments
-* Linux Mint 17.3, R 3.3.1
-* Ubuntu 14.04, R 3.3.1
+* Linux Mint 17.3, R 3.3.2
 * win-builder (devel and release)
 
 ## R CMD check results
