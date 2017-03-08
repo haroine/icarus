@@ -7,10 +7,10 @@
 calibration(data, marginMatrix, colWeights, method = "linear",
   bounds = NULL, q = NULL, costs = NULL, gap = NULL, popTotal = NULL,
   pct = FALSE, scale = NULL, description = TRUE, maxIter = 2500,
-  check = TRUE, uCostPenalized = 1, lambda = NULL,
-  precisionBounds = 1e-04, forceSimplex = FALSE, forceBisection = FALSE,
-  colCalibratedWeights, exportDistributionImage = NULL,
-  exportDistributionTable = NULL)
+  check = TRUE, calibTolerance = 1e-06, uCostPenalized = 1,
+  lambda = NULL, precisionBounds = 1e-04, forceSimplex = FALSE,
+  forceBisection = FALSE, colCalibratedWeights,
+  exportDistributionImage = NULL, exportDistributionTable = NULL)
 }
 \arguments{
 \item{data}{The dataframe containing the survey data}
@@ -52,6 +52,10 @@ graph of the density of the ratio calibrated weights / initial weights}
 \item{maxIter}{The maximum number of iterations before stopping}
 
 \item{check}{performs a few check about the dataframe. TRUE by default}
+
+\item{calibTolerance}{Tolerance for the distance to an exact solution.
+Could be useful when there is a huge number of margins as the risk of
+inadvertently setting incompatible constraints is higher. Set to 1e-06 by default.}
 
 \item{uCostPenalized}{Unary cost by which every cost is "costs" column is multiplied}
 
