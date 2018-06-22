@@ -55,3 +55,30 @@ marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
         )
 
 }
+
+#' Create empty margin matrix
+#' @description 
+#' Use this to create an empty margin matrix (which facilitates
+#' the use of magrittr syntax to enter margins)
+#' 
+#' @examples 
+#' library(magrittr)
+#' N <- 300 ## population total
+#' ## Horvitz Thompson estimator of the mean: 1.666667
+#' weightedMean(data_ex2$cinema, data_ex2$poids, N)
+#' ## Enter calibration margins:
+#' margins <- newMarginMatrix() %>%
+#'   addMargin("categ", c(0.35, 0.40, 0.25)) %>%
+#'   addMargin("sexe", c(0.6, 0.4)) %>%
+#'   addMargin("service", c(0.45, 0.55)) %>%
+#'   addMargin("salaire", 470000)
+#' ## Compute calibrated weights with raking ratio method
+#' wCal <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
+#'                     , method="raking", pct = TRUE, description=FALSE
+#'                     , popTotal = N)
+#' ## Calibrated estimate: 2.471917
+#' weightedMean(data_ex2$cinema, wCal, N)
+#' @export
+newMarginMatrix <- function() {
+  return(matrix(, nrow = 0, ncol = 1))
+}
