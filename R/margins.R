@@ -63,8 +63,8 @@ marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
 #' 
 #' @examples 
 #' library(magrittr)
-#' N <- 300 ## population total
-#' ## Horvitz Thompson estimator of the mean: 1.666667
+#' N <- 230 ## population total
+#' ## Horvitz Thompson estimator of the mean: 2.174
 #' weightedMean(data_ex2$cinema, data_ex2$poids, N)
 #' ## Enter calibration margins:
 #' margins <- newMarginMatrix() %>%
