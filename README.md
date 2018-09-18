@@ -1,3 +1,5 @@
+[![Mentioned in Awesome Official Statistics ](https://awesome.re/mentioned-badge.svg)](http://www.awesomeofficialstatistics.org)
+
 # Icarus
 
 Icarus (Icarus Calibrates And Reweights Units in Samples) is an R package providing useful functions for calibration and reweighting estimators in survey sampling. The former name of this package was gaston.
