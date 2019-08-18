@@ -57,18 +57,18 @@
 #' @examples
 #' N <- 300 ## population total
 #' ## Horvitz Thompson estimator of the mean: 1.666667
-#' weightedMean(data_ex2$cinema, data_ex2$poids, N) 
+#' weightedMean(data_employees$movies, data_employees$weight, N) 
 #' ## Enter calibration margins:
-#' mar1 <- c("categ",3,80,90,60)
-#' mar2 <- c("sexe",2,140,90,0)
-#' mar3 <- c("service",2,100,130,0)
-#' mar4 <- c("salaire", 0, 470000,0,0)
+#' mar1 <- c("category",3,80,90,60)
+#' mar2 <- c("sex",2,140,90,0)
+#' mar3 <- c("department",2,100,130,0)
+#' mar4 <- c("salary", 0, 470000,0,0)
 #' margins <- rbind(mar1, mar2, mar3, mar4)
 #' ## Compute calibrated weights with raking ratio method
-#' wCal <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
+#' wCal <- calibration(data=data_employees, marginMatrix=margins, colWeights="weight"
 #'                             , method="raking", description=FALSE)
 #' ## Calibrated estimate: 2.471917
-#' weightedMean(data_ex2$cinema, wCal, N)
+#' weightedMean(data_employees$movies, wCal, N)
 #'
 #' @references Deville, Jean-Claude, and Carl-Erik Sarndal. "Calibration estimators in survey sampling." 
 #' Journal of the American statistical Association 87.418 (1992): 376-382.

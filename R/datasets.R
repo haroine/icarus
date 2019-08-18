@@ -81,7 +81,7 @@ NULL
 #' @author Antoine Rebecq
 NULL
 
-#' @name data_ex2
+#' @name data_employees
 #' @title A small example sample for calibration with Icarus
 #' @description This table features a samples of 15 units (drawn from a population of size 300), 
 #' used in a small survey to determine how frequently the employees of a firm go the movies (column "cinema").
@@ -92,7 +92,7 @@ NULL
 #' service: 100 (modality 1) ; 130 (modality 2)
 #' salaire : 470000
 #' @docType data
-#' @usage data_ex2
+#' @usage data_employees
 #' @format 15 rows, one per unit in sample.
 #' 1 column "id", unique id for each unit.
 #' 4 columns of auxiliary variables ("service", "categ", "sexe", "salaire").
@@ -101,11 +101,11 @@ NULL
 #' @author Antoine Rebecq
 NULL
 
-#' @name calWeights_ex2
-#' @title Calibration weights for \code{\link{data_ex2}}
-#' @description Calibration weights computed with Calmar2 for the small example \code{\link{data_ex2}}.
+#' @name calWeights_employees
+#' @title Calibration weights for \code{\link{data_employees}}
+#' @description Calibration weights computed with Calmar2 for the small example \code{\link{data_employees}}.
 #' @docType data
-#' @usage calWeights_ex2
+#' @usage calWeights_employees
 #' @format 1 column "id", unique id for each of the 15 units in sample.
 #' 3 columns with calibration weights using 3 different methods (linear, raking, and logit
 #' with bounds LO=0.4, UP=2.2)

@@ -65,19 +65,19 @@ marginsToTeX <- function(marginMatrix, names=NULL, pct=FALSE, popTotal=NULL,
 #' library(magrittr)
 #' N <- 230 ## population total
 #' ## Horvitz Thompson estimator of the mean: 2.174
-#' weightedMean(data_ex2$cinema, data_ex2$poids, N)
+#' weightedMean(data_employees$movies, data_employees$weight, N)
 #' ## Enter calibration margins:
 #' margins <- newMarginMatrix() %>%
-#'   addMargin("categ", c(0.35, 0.40, 0.25)) %>%
-#'   addMargin("sexe", c(0.6, 0.4)) %>%
-#'   addMargin("service", c(0.45, 0.55)) %>%
-#'   addMargin("salaire", 470000)
+#'   addMargin("category", c(0.35, 0.40, 0.25)) %>%
+#'   addMargin("sex", c(0.6, 0.4)) %>%
+#'   addMargin("department", c(0.45, 0.55)) %>%
+#'   addMargin("salary", 470000)
 #' ## Compute calibrated weights with raking ratio method
-#' wCal <- calibration(data=data_ex2, marginMatrix=margins, colWeights="poids"
+#' wCal <- calibration(data=data_employees, marginMatrix=margins, colWeights="weight"
 #'                     , method="raking", pct = TRUE, description=FALSE
 #'                     , popTotal = N)
 #' ## Calibrated estimate: 2.471917
-#' weightedMean(data_ex2$cinema, wCal, N)
+#' weightedMean(data_employees$movies, wCal, N)
 #' @export
 newMarginMatrix <- function() {
   return(matrix(, nrow = 0, ncol = 1))
