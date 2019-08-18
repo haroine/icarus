@@ -16,4 +16,3 @@ Calibration weights computed with Calmar2 for the small example \code{\link{data
 \author{
 Antoine Rebecq
 }
-

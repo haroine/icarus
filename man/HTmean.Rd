@@ -25,4 +25,3 @@ Computes the weighted estimator for the mean of a column. Alias for
 \seealso{
 \code{\link{weightedMean}}
 }
-

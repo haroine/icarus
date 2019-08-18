@@ -15,4 +15,3 @@ of \code{\link{dataPop}}. Margins for categorical variables are entered in perce
 \author{
 Antoine Rebecq
 }
-

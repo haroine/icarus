@@ -31,4 +31,3 @@ Changes a column containing multiple values
 to a matrix of columns containing the dummies
 corresponding to each value.
 }
-

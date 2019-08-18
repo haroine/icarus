@@ -25,11 +25,10 @@ of fixed size 1000 is selected. Among the 1000 units in the selected sample, onl
 718 are respondant to the survey. These responding units are selected using a dummy
 logit model.
 }
-\author{
-Antoine Rebecq
-}
 \references{
 Rebecq, A., & Merly-Alpa, T. Pourquoi minimiser la dispersion des 
 poids en sondage. preprint.
 }
-
+\author{
+Antoine Rebecq
+}

@@ -15,4 +15,3 @@ of \code{\link{dataPop}}
 \author{
 Antoine Rebecq
 }
-

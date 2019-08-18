@@ -21,4 +21,3 @@ Computes the weighted estimator for the total of a column. Alias for
 \seealso{
 \code{\link{weightedTotal}}
 }
-

@@ -25,4 +25,3 @@ salaire : 470000
 \author{
 Antoine Rebecq
 }
-

@@ -5,11 +5,11 @@
 \title{Calibration on margins}
 \usage{
 calibration(data, marginMatrix, colWeights, method = "linear",
-  bounds = NULL, q = NULL, costs = NULL, gap = NULL, popTotal = NULL,
-  pct = FALSE, scale = NULL, description = TRUE, maxIter = 2500,
-  check = TRUE, calibTolerance = 1e-06, uCostPenalized = 1,
-  lambda = NULL, precisionBounds = 1e-04, forceSimplex = FALSE,
-  forceBisection = FALSE, colCalibratedWeights,
+  bounds = NULL, q = NULL, costs = NULL, gap = NULL,
+  popTotal = NULL, pct = FALSE, scale = NULL, description = TRUE,
+  maxIter = 2500, check = TRUE, calibTolerance = 1e-06,
+  uCostPenalized = 1, lambda = NULL, precisionBounds = 1e-04,
+  forceSimplex = FALSE, forceBisection = FALSE, colCalibratedWeights,
   exportDistributionImage = NULL, exportDistributionTable = NULL)
 }
 \arguments{
@@ -121,4 +121,3 @@ Le Guennec, Josiane, and Olivier Sautory. "Calmar 2: Une nouvelle version
 de la macro calmar de redressement d'echantillon par calage." Journees de Methodologie Statistique, 
 Paris. INSEE (2002).
 }
-

@@ -4,8 +4,9 @@
 \alias{calibrationMarginStats}
 \title{Stats for initial weights, calibrated weights, and margins.}
 \usage{
-calibrationMarginStats(data, marginMatrix, popTotal = NULL, pct = FALSE,
-  colWeights, colCalibratedWeights = NULL, calibThreshold = 1)
+calibrationMarginStats(data, marginMatrix, popTotal = NULL,
+  pct = FALSE, colWeights, colCalibratedWeights = NULL,
+  calibThreshold = 1)
 }
 \arguments{
 \item{data}{dataframe containing the survey data}
@@ -42,4 +43,3 @@ use function \code{\link{marginStats}}, which outputs a dataframe.
 \keyword{results}
 \keyword{statistics,}
 \keyword{stats,}
-

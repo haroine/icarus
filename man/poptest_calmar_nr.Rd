@@ -18,12 +18,11 @@ This data set features calibration weights for the sample test of \code{\link{da
 is computed using the SAS Macro Calmar2, for test purposes. Only the 718 responding units are
 taken into account.
 }
-\author{
-Antoine Rebecq
-}
 \references{
 Le Guennec, J., and Sautory, O. (2002). Calmar 2: Une nouvelle version 
 de la macro calmar de redressement d'echantillon par calage. 
 Journees de Methodologie Statistique, Paris. INSEE.
 }
-
+\author{
+Antoine Rebecq
+}

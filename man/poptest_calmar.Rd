@@ -17,12 +17,11 @@ This data set features calibration weights for the sample test of \code{\link{da
 (using margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}). Calibration is
 is computed using the SAS Macro Calmar2, for test purposes.
 }
-\author{
-Antoine Rebecq
-}
 \references{
 Le Guennec, J., and Sautory, O. (2002). Calmar 2: Une nouvelle version 
 de la macro calmar de redressement d'echantillon par calage. 
 Journees de Methodologie Statistique, Paris. INSEE.
 }
-
+\author{
+Antoine Rebecq
+}

@@ -24,4 +24,3 @@ Computes the weighted estimator for the mean of a column
 \seealso{
 \code{\link{HTmean}}
 }
-

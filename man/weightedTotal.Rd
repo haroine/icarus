@@ -20,4 +20,3 @@ Computes the weighted estimator for the total of a column
 \seealso{
 \code{\link{HTtotal}}
 }
-

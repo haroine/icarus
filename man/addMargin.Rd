@@ -25,4 +25,3 @@ is under thresholdAdjustToOne}
 \description{
 Adds a margin to marginMatrix
 }
-
