@@ -1,3 +1,11 @@
+# icarus 0.3.1
+
+## New features
+
+* Changed all features in test dataset to English and corresponding tests and examples
+
+* Add newMarginMatrix function to help create margins with pipe operator
+
 # icarus 0.3.0
 
 ## New features
