@@ -101,11 +101,11 @@ NULL
 #' @author Antoine Rebecq
 NULL
 
-#' @name calWeights_employees
+#' @name calWeights_movies
 #' @title Calibration weights for \code{\link{data_employees}}
 #' @description Calibration weights computed with Calmar2 for the small example \code{\link{data_employees}}.
 #' @docType data
-#' @usage calWeights_employees
+#' @usage calWeights_movies
 #' @format 1 column "id", unique id for each of the 15 units in sample.
 #' 3 columns with calibration weights using 3 different methods (linear, raking, and logit
 #' with bounds LO=0.4, UP=2.2)
