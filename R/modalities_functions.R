@@ -95,7 +95,7 @@ colToDummies = function(col, nameCol, modalities=NULL, keepValue = FALSE)
 # Example : regroupModalities(enlDataNeufs$AGEPR, regroupMatrix)
 #' Regroup elements of a vector
 #' @description
-#' Regroup the contiguuous elements of a vector under a single value. Which elements should
+#' Regroup the contiguous elements of a vector under a single value. Which elements should
 #' be regrouped is indicated by the rows of a matrix. Output vector is NOT a factor.
 #' @param column Column vector which values are going to be replaced
 #' @param regroupMatrix Bounds of the values to regroup under the same modality
@@ -122,7 +122,7 @@ regroupModalities = function(column, regroupMatrix, modalities=NULL) {
 
 }
 
-# As regroupModalities is designed to regroup continuuous modalities
+# As regroupModalities is designed to regroup continuous modalities
 # (typically to transform numeric variable into discrete ones),
 # regroupContiguuousModalities can regroup different modalities into just one
 regroupUnContiguuousModalities <- function(column, vecModalities, newModality) {
