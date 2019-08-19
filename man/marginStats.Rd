@@ -38,7 +38,3 @@ Output is a dataframe, which might be more convenient to export than a list
 \seealso{
 \code{\link{calibrationMarginStats}}
 }
-\keyword{description,}
-\keyword{results}
-\keyword{statistics,}
-\keyword{stats,}

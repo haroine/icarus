@@ -39,7 +39,3 @@ use function \code{\link{marginStats}}, which outputs a dataframe.
 \seealso{
 \code{\link{marginStats}}
 }
-\keyword{description,}
-\keyword{results}
-\keyword{statistics,}
-\keyword{stats,}

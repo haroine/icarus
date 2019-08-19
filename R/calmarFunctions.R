@@ -174,7 +174,6 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
 #' this parameter, calibration is considered to have failed
 #' @return List containing stats on weights and margins
 #' @seealso \code{\link{marginStats}}
-#' @keywords statistics, stats, description, results
 #' @export
 calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
 
@@ -344,7 +343,6 @@ calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, 
 #' this parameter, calibration is considered to have failed
 #' @return Dataframe containing stats on weights and margins
 #' @seealso \code{\link{calibrationMarginStats}}
-#' @keywords statistics, stats, description, results
 #' @export
 marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
                         , colCalibratedWeights=NULL, calibThreshold=1.0) {
