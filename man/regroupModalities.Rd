@@ -19,7 +19,7 @@ If not specified, replacement modalities will be 1:length(column)}
 Column vector with regrouped modalities
 }
 \description{
-Regroup the contiguuous elements of a vector under a single value. Which elements should
+Regroup the contiguous elements of a vector under a single value. Which elements should
 be regrouped is indicated by the rows of a matrix. Output vector is NOT a factor.
 }
 \examples{
