@@ -349,10 +349,11 @@ marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
 
   listMarginStats <- calibrationMarginStats(data, marginMatrix, popTotal, pct, colWeights
                                             , colCalibratedWeights, calibThreshold)
-  marginStatsDF <- do.call(rbind.data.frame, listMarginStats)
+  marginStatsDF <- marginStatsDF_gen(listMarginStats)
 
   ## Compute column difference
   marginStatsDF <- marginStatsDF[,-c(4)]
+  
   if( is.null(colCalibratedWeights) ) {
 
     marginStatsDF <- marginStatsDF[,-c(2)] # Do not display calibrated weigths column
@@ -377,6 +378,31 @@ marginStats <- function(data, marginMatrix, pct=FALSE, popTotal=NULL, colWeights
 
   return(marginStatsDF)
 
+}
+
+# Private function, created to deal with a new warning  
+# appearing in `rbind.data.frame` that is properly handled in the rest of the code
+marginStatsDF_gen <- function(listMarginStats) {
+  return_df <- tryCatch(
+  {
+    do.call(rbind.data.frame, listMarginStats)
+  },
+  error=function(cond) {
+    message(cond)
+    return(NA)
+  },
+  warning=function(cond) {
+    warn_message <- cond$message
+    if( !(grepl("number of columns of result", warn_message, fixed = T)) ||
+        !(grepl("is not a multiple of vector length", warn_message, fixed = T)) ||
+        !(grepl("of arg", warn_message, fixed = T)) ) {
+      message(cond)
+      return(NA)
+    } else {
+      suppressWarnings(do.call(rbind.data.frame, listMarginStats))
+    }
+  })
+  return_df
 }
 
 ## Private function, used in marginMatrix to account for
