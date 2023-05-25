@@ -184,7 +184,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
       g <- calib(Xs=matrixCal, d=weights, total=formattedMargins, q=q,
                  method=method, bounds=bounds, maxIter=maxIter, calibTolerance=calibTolerance)
     } else {
-      if( (bounds == "min") || (method == "min")) {
+      if( (any(identical(bounds,"min"))) || (method == "min")) {
         g <- minBoundsCalib(Xs=matrixCal, d=weights, total=formattedMargins
                             , q=rep(1,nrow(matrixCal)), maxIter=maxIter, description=description, precisionBounds=precisionBounds, forceSimplex=forceSimplex, forceBisection=forceBisection)
       }
@@ -233,7 +233,7 @@ calibration = function(data, marginMatrix, colWeights, method="linear", bounds=N
         writeLines(paste("\t U bound : ",bounds[2], sep=""))
       }
       
-      if( (bounds == "min") || (method == "min") ) {
+      if( (any(identical(bounds,"min"))) || (method == "min") ) {
         writeLines(paste("\t L bound : ",round(min(g),4), sep=""))
         writeLines(paste("\t U bound : ",round(max(g),4), sep=""))
       }
