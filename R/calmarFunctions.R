@@ -2,12 +2,12 @@
 # Functions designed so that calibration can be made in a familiar
 # setting for Calmar and Calmar2 users
 
-nModalities = function(col)
+nModalities <- function(col)
 {
   return(length(unique(col)))
 }
 
-calibrationMatrix = function(entryMatrix, popVector=TRUE, isQuantitative=NULL)
+calibrationMatrix <- function(entryMatrix, popVector=TRUE, isQuantitative=NULL)
 {
   if(is.null(isQuantitative)) {
     isQuantitative <- rep(FALSE, ncol(entryMatrix))
@@ -51,7 +51,7 @@ calibrationMatrix = function(entryMatrix, popVector=TRUE, isQuantitative=NULL)
   return(calibrationMatrix)
 }
 
-dummyModalitiesMatrix = function(entryMatrix)
+dummyModalitiesMatrix <- function(entryMatrix)
 {
   dmatrix = calibrationMatrix(entryMatrix)
   dmatrix[dmatrix!=0] = 1
@@ -60,7 +60,7 @@ dummyModalitiesMatrix = function(entryMatrix)
 
 ## private function that computes weighted estimates
 ## @keywords internal
-HTtotals = function(dummyModalitiesMatrix, weights)
+HTtotals <- function(dummyModalitiesMatrix, weights)
 {
   return(weights%*%dummyModalitiesMatrix)
 }
@@ -68,7 +68,7 @@ HTtotals = function(dummyModalitiesMatrix, weights)
 ## ensures compatibility with first version of icarus 
 ## (when it was still called gaston 0.0.1)
 ## @keywords internal
-createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
+createCalibrationMatrix <- function(marginMatrix, data, popVector=TRUE)
 {
   # Select calibration variables in the table
   # (and indicates whether they are quantitative / categorical)
@@ -88,7 +88,7 @@ createCalibrationMatrix = function(marginMatrix, data, popVector=TRUE)
 ## Main private function for the creation of the margin matrix
 ## @param calmarMatrix matrix of margins without the names column
 ## @keywords internal
-formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FALSE)
+formatMargins <- function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FALSE)
 {
   # Create empty vector of margins
   cMatrixCopy = calmarMatrix
@@ -175,7 +175,7 @@ formatMargins = function(calmarMatrix, calibrationMatrix, popTotal=NULL, pct=FAL
 #' @return List containing stats on weights and margins
 #' @seealso \code{\link{marginStats}}
 #' @export
-calibrationMarginStats = function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
+calibrationMarginStats <- function(data, marginMatrix, popTotal=NULL, pct=FALSE, colWeights, colCalibratedWeights=NULL, calibThreshold=1.0) {
 
   displayCalibratedWeights <- TRUE
 
@@ -404,7 +404,7 @@ correctCoefsCategorical <- function(marginStatsDF_init, marginMatrix, ncol1=1, n
 
 
 ## Check validity of marginMatrix (deprecated)
-checkMarginMatrix = function(marginMatrix) {
+checkMarginMatrix <- function(marginMatrix) {
   
   .Deprecated("checkNumberMargins")
 
@@ -417,7 +417,7 @@ checkMarginMatrix = function(marginMatrix) {
 
 ## Displays number of NAs among margins
 ## @keywords internal
-missingValuesMargins = function(data, marginMatrix) {
+missingValuesMargins <- function(data, marginMatrix) {
 
   nVar = nrow(marginMatrix)
   marginNames = marginMatrix[,1]
@@ -435,7 +435,7 @@ missingValuesMargins = function(data, marginMatrix) {
 ## Checks if number of modalities in data matches expected ones according
 ## to marginMatrix
 ## @keywords internal
-checkNumberMargins = function(data, marginMatrix) {
+checkNumberMargins <- function(data, marginMatrix) {
 
   returnBool = TRUE
   marginNames = marginMatrix[,1]
