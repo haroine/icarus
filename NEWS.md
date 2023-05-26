@@ -1,4 +1,4 @@
-# icarus 0.3.1
+# icarus 0.3.2
 
 ## Bug fixes
 

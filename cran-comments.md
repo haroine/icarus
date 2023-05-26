@@ -1,6 +1,5 @@
 ## Test environments
-* Ubuntu 16.04, R 3.4.4
-* Debian Jessie, R 3.5.3
+* Ubuntu 20.04, R 4.3.0
 * win-builder (devel and release)
 
 ## R CMD check results
