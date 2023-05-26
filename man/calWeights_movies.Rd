@@ -4,9 +4,11 @@
 \name{calWeights_movies}
 \alias{calWeights_movies}
 \title{Calibration weights for \code{\link{data_employees}}}
-\format{1 column "id", unique id for each of the 15 units in sample.
+\format{
+1 column "id", unique id for each of the 15 units in sample.
 3 columns with calibration weights using 3 different methods (linear, raking, and logit
-with bounds LO=0.4, UP=2.2)}
+with bounds LO=0.4, UP=2.2)
+}
 \usage{
 calWeights_movies
 }

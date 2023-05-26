@@ -4,8 +4,13 @@
 \alias{addMargin}
 \title{Adds a margin to marginMatrix}
 \usage{
-addMargin(marginMatrix, varName, vecTotals, adjustToOne = TRUE,
-  thresholdAdjustToOne = 0.01)
+addMargin(
+  marginMatrix,
+  varName,
+  vecTotals,
+  adjustToOne = TRUE,
+  thresholdAdjustToOne = 0.01
+)
 }
 \arguments{
 \item{marginMatrix}{The matrix of margins to add the new margin to}

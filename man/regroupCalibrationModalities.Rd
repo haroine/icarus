@@ -4,8 +4,13 @@
 \alias{regroupCalibrationModalities}
 \title{Regroup calibration modalities}
 \usage{
-regroupCalibrationModalities(calibrationMatrix, marginMatrix,
-  calibrationVariable, vecModalities, newModality)
+regroupCalibrationModalities(
+  calibrationMatrix,
+  marginMatrix,
+  calibrationVariable,
+  vecModalities,
+  newModality
+)
 }
 \arguments{
 \item{calibrationMatrix}{calibration matrix}

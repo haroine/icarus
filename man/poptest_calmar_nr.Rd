@@ -4,11 +4,13 @@
 \name{poptest_calmar_nr}
 \alias{poptest_calmar_nr}
 \title{Calibration with nonresponse on population test - made on Calmar2}
-\format{718 rows, one per unit in the sample.
+\format{
+718 rows, one per unit in the sample.
 1 column "ident", with a unique id for every unit in the sample
 3 methods of calibration are used (linear, raking, and logit with bounds LO=0.1 and UP=2.0 and parameter ECHELLE=0) for
 two different margins tables \code{\link{table_margins_1}} and \code{\link{table_margins_2}}, which results in 
-7 columns of weights.}
+7 columns of weights.
+}
 \usage{
 poptest_calmar_nr
 }

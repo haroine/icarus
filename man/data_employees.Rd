@@ -4,11 +4,13 @@
 \name{data_employees}
 \alias{data_employees}
 \title{A small example sample for calibration with Icarus}
-\format{15 rows, one per unit in sample.
+\format{
+15 rows, one per unit in sample.
 1 column "id", unique id for each unit.
 4 columns of auxiliary variables ("service", "categ", "sexe", "salaire").
 1 column "cinema" - the variable of interest
-1 column "weight" - the Horvitz-Thompson weights}
+1 column "weight" - the Horvitz-Thompson weights
+}
 \usage{
 data_employees
 }

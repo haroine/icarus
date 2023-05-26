@@ -4,7 +4,9 @@
 \name{table_margins_1}
 \alias{table_margins_1}
 \title{Margins for calibration of test population}
-\format{A margins table written in the Icarus format.}
+\format{
+A margins table written in the Icarus format.
+}
 \usage{
 table_margins_1
 }

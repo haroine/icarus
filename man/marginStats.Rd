@@ -4,8 +4,15 @@
 \alias{marginStats}
 \title{Stats for initial weights, calibrated weights, and margins.}
 \usage{
-marginStats(data, marginMatrix, pct = FALSE, popTotal = NULL,
-  colWeights, colCalibratedWeights = NULL, calibThreshold = 1)
+marginStats(
+  data,
+  marginMatrix,
+  pct = FALSE,
+  popTotal = NULL,
+  colWeights,
+  colCalibratedWeights = NULL,
+  calibThreshold = 1
+)
 }
 \arguments{
 \item{data}{dataframe containing the survey data}

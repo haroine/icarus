@@ -4,13 +4,31 @@
 \alias{calibration}
 \title{Calibration on margins}
 \usage{
-calibration(data, marginMatrix, colWeights, method = "linear",
-  bounds = NULL, q = NULL, costs = NULL, gap = NULL,
-  popTotal = NULL, pct = FALSE, scale = NULL, description = TRUE,
-  maxIter = 2500, check = TRUE, calibTolerance = 1e-06,
-  uCostPenalized = 1, lambda = NULL, precisionBounds = 1e-04,
-  forceSimplex = FALSE, forceBisection = FALSE, colCalibratedWeights,
-  exportDistributionImage = NULL, exportDistributionTable = NULL)
+calibration(
+  data,
+  marginMatrix,
+  colWeights,
+  method = "linear",
+  bounds = NULL,
+  q = NULL,
+  costs = NULL,
+  gap = NULL,
+  popTotal = NULL,
+  pct = FALSE,
+  scale = NULL,
+  description = TRUE,
+  maxIter = 2500,
+  check = TRUE,
+  calibTolerance = 1e-06,
+  uCostPenalized = 1,
+  lambda = NULL,
+  precisionBounds = 1e-04,
+  forceSimplex = FALSE,
+  forceBisection = FALSE,
+  colCalibratedWeights,
+  exportDistributionImage = NULL,
+  exportDistributionTable = NULL
+)
 }
 \arguments{
 \item{data}{The dataframe containing the survey data}
@@ -21,10 +39,10 @@ in the calibration problem}
 \item{colWeights}{The name of the column containing the initial weights in the survey
 dataframe}
 
-\item{method}{The method used to calibrate. Can be "linear", "raking", "logit", "truncated"}
+\item{method}{The method used to calibrate. Can be "linear", "raking", "logit"}
 
 \item{bounds}{Two-element vector containing the lower and upper bounds for bounded methods
-("truncated" and "logit")}
+("logit")}
 
 \item{q}{Vector of q_k weights described in Deville and Sarndal (1992)}
 

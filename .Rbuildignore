@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 cran-comments.md
 ^NEWS\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
