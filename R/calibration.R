@@ -1,4 +1,4 @@
-# copyright (C) 2014-2016 A.Rebecq
+# copyright (C) 2014-2023 A.Rebecq
 # This function executes easy calibration with just data and matrix of margins
 
 #########
@@ -10,9 +10,9 @@
 #' in the calibration problem
 #' @param colWeights The name of the column containing the initial weights in the survey
 #' dataframe
-#' @param method The method used to calibrate. Can be "linear", "raking", "logit", "truncated"
+#' @param method The method used to calibrate. Can be "linear", "raking", "logit"
 #' @param bounds Two-element vector containing the lower and upper bounds for bounded methods
-#' ("truncated" and "logit")
+#' ("logit")
 #' @param q Vector of q_k weights described in Deville and Sarndal (1992)
 #' @param costs The penalized calibration method will be used, using costs defined by this
 #' vector. Must match the number of rows of marginMatrix. Negative of non-finite costs are given

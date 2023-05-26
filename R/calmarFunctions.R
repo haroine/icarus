@@ -1,4 +1,4 @@
-# copyright (C) 2014-2016 A.Rebecq
+# copyright (C) 2014-2023 A.Rebecq
 # Functions designed so that calibration can be made in a familiar
 # setting for Calmar and Calmar2 users
 
