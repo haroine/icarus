@@ -1,5 +1,13 @@
 # icarus 0.3.1
 
+## Bug fixes
+
+* Changed behaviors in certain functions that raised warnings and/or errors
+
+* Corrected documentation which in function `calibration` incorrectly mentioned a second un-existing method using bounds 
+
+# icarus 0.3.1
+
 ## New features
 
 * Changed all features in test dataset to English and corresponding tests and examples
