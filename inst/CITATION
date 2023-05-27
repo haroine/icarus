@@ -3,10 +3,11 @@ citHeader("To cite icarus in publications use:")
 year <- 2016
 note <-"R package version 0.2.0"
 
-citEntry(
-  entry    = "Unpublished",
-  title    = "{Icarus}: an R package for calibration in survey sampling",
-  author   = c(as.person("Antoine Rebecq")),
-  note     = note,
-  textVersion = paste0("Rebecq, Antoine (",year,"). Icarus: an R package for calibration in survey sampling. ",note,".")
-)
+bibentry(
+   bibtype = "Unpublished",
+   title = "{Icarus}: an R package for calibration in survey sampling",
+   author = person("Antoine Rebecq"),
+   organization = "R Foundation for Statistical Computing",
+   year = year,
+   note = note
+   )
